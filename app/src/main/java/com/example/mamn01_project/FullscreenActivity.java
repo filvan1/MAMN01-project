@@ -15,6 +15,7 @@ import android.view.WindowInsets;
 
 import com.example.mamn01_project.databinding.ActivityFullscreenBinding;
 
+
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
@@ -25,6 +26,7 @@ public class FullscreenActivity extends AppCompatActivity {
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
      */
     private static final boolean AUTO_HIDE = true;
+
 
     /**
      * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
