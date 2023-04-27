@@ -1,20 +1,38 @@
 package com.example.mamn01_project.ui.alarm;
 
+import static android.content.Context.ALARM_SERVICE;
+
+import static androidx.core.content.ContextCompat.getSystemService;
+
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.AlarmClock;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.mamn01_project.R;
 import com.example.mamn01_project.databinding.FragmentAlarmBinding;
+
+import java.util.Calendar;
 
 public class AlarmFragment extends Fragment {
 
     private FragmentAlarmBinding binding;
+
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -26,8 +44,39 @@ public class AlarmFragment extends Fragment {
 
         final TextView textView = binding.textHome;
         alarmViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+
+        // Need to call findViewById on the specific view that this fragment returns
+        Button button = (Button) root.findViewById(R.id.alarm_button);
+
+        button.setOnClickListener(new View.OnClickListener() {
+
+            Calendar cal = Calendar.getInstance();
+            int currentHour = cal.get(Calendar.HOUR_OF_DAY);
+            int currentMinute = cal.get(Calendar.MINUTE);
+
+            TimePickerDialog pickerDialog = new TimePickerDialog(getActivity(), (timePicker, hours, minutes) ->{
+                Log.d("", ""+hours+ " "+ minutes);
+                AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
+                Intent intent = new Intent(getContext(),Receiver.class);
+                PendingIntent pending = PendingIntent.getBroadcast(getActivity(), 234324243, intent, PendingIntent.FLAG_IMMUTABLE);
+                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+(5 * 1000), pending);
+                Toast.makeText(getActivity(), "Alarm set in " + 10 + " seconds", Toast.LENGTH_LONG).show();
+
+            }, currentHour, currentMinute, false);
+
+
+
+            public void onClick(View v) {
+                Log.d("BUTTONS", "User tapped the button");
+                pickerDialog.show();
+            }
+        });
+
         return root;
     }
+
+
+
 
     @Override
     public void onDestroyView() {
