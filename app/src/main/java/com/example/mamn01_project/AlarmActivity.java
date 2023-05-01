@@ -17,6 +17,7 @@ public class AlarmActivity extends AppCompatActivity {
 
     }
 
+    // Make sure that the activity shows even when the screen is locked or sleeping
     private void showWhenLocked(){
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1){
             setShowWhenLocked(true);
