@@ -12,4 +12,11 @@
     <color name="light_blue_A200">#FF40C4FF</color>
     <color name="light_blue_A400">#FF00B0FF</color>
     <color name="black_overlay">#66000000</color>
+
+    <!--NW egna färger -->
+    <color name="nw_background">#2C4251</color>
+    <color name="nw_highlight">#C2FFFD</color>
+    <color name="nw_primary">#90C8F4</color>
+    <color name="nw_ocean_blue">#68BFF0</color>
+    <color name="nw_skipbutton">#D16666</color>
 </resources>

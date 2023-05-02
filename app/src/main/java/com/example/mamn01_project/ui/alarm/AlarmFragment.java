@@ -46,6 +46,7 @@ public class AlarmFragment extends Fragment {
         alarmViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
         // Need to call findViewById on the specific view that this fragment returns
+
         Button button = (Button) root.findViewById(R.id.alarm_button);
 
         // Alarm button
