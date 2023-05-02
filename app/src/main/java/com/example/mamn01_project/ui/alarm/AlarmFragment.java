@@ -22,6 +22,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.example.mamn01_project.AlarmActivity;
 import com.example.mamn01_project.R;
@@ -29,7 +30,7 @@ import com.example.mamn01_project.databinding.FragmentAlarmBinding;
 
 import java.util.Calendar;
 
-public class AlarmFragment extends Fragment implements AlarmStopListener {
+public class AlarmFragment extends Fragment {
     private PendingIntent pending;
     private FragmentAlarmBinding binding;
 
@@ -42,7 +43,6 @@ public class AlarmFragment extends Fragment implements AlarmStopListener {
         AlarmViewModel alarmViewModel =
                 new ViewModelProvider(this).get(AlarmViewModel.class);
 
-        ((AlarmActivity) getActivity()).setAlarmStopListener(this);
 
         binding = FragmentAlarmBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -95,15 +95,12 @@ public class AlarmFragment extends Fragment implements AlarmStopListener {
     public void stopAlarm() {
         alarmManager.cancel(pending);
         Toast.makeText(getActivity(), "Alarm stopped.", Toast.LENGTH_LONG).show();
+        LocalBroadcastManager.getInstance(requireActivity()).sendBroadcast(new Intent("ALARM_STOP"));
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
-    }
-    @Override
-    public void onStopAlarm() {
-        stopAlarm();
     }
 }

@@ -1,9 +1,11 @@
 package com.example.mamn01_project;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.content.Context;
 
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -17,12 +19,9 @@ import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.example.mamn01_project.ui.alarm.AlarmStopListener;
-
 public class AlarmActivity extends AppCompatActivity implements SensorEventListener {
     private SensorManager sensorManager;
     private  Sensor accelerometer;
-    private AlarmStopListener alarmStopListener;
 
     /*Dessa variabler är temporära här för att testa solhälsning. Denna data ska komma från en
     separat class för varje övning sen */
@@ -66,6 +65,10 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
         }
     }
 
+    /* När overHead && toesTouched båda är sanna skapar vi en broadcast för att stoppa alarmet
+    * i Wake har vi en braodcast reviecer som kan fånga upp detta och onRecieve metoden körs. Den
+    * kommer i sin tur att kalla på stopAlarm metoden i AlarmFragment. stopAlarm metoden stoppar
+    * alarmet och skickar tillbaka braodcast att alarmet är stoppat.  */
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         float z = sensorEvent.values[2];
@@ -75,14 +78,11 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
             toesTouched = true;
         }
         if(overHead && toesTouched) {
-           if(alarmStopListener != null) {
-               alarmStopListener.onStopAlarm();
+            LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent("ALARM_STOP"));
            }
-        }
         Log.d("AlarmActivity", "onSensorChanged: z=" + sensorEvent.values[2]);
+        }
 
-
-    }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
@@ -101,8 +101,5 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
         super.onPause();
         sensorManager.unregisterListener(this);
         Log.d("AlarmActivity", "onPause");
-    }
-    public void setAlarmStopListener(AlarmStopListener listener) {
-        this.alarmStopListener = listener;
     }
 }
