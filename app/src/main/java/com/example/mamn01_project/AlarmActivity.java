@@ -13,12 +13,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Toast;
+
+import com.example.mamn01_project.ui.alarm.AlarmStopListener;
 
 public class AlarmActivity extends AppCompatActivity implements SensorEventListener {
     private SensorManager sensorManager;
     private  Sensor accelerometer;
+    private AlarmStopListener alarmStopListener;
 
     /*Dessa variabler är temporära här för att testa solhälsning. Denna data ska komma från en
     separat class för varje övning sen */
@@ -46,6 +50,7 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
             //deprecated in API 26
             v.vibrate(500);
         }
+        Log.d("AlarmActivity", "onCreate");
 
     }
 
@@ -70,9 +75,11 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
             toesTouched = true;
         }
         if(overHead && toesTouched) {
-            finish();
+           if(alarmStopListener != null) {
+               alarmStopListener.onStopAlarm();
+           }
         }
-
+        Log.d("AlarmActivity", "onSensorChanged: z=" + sensorEvent.values[2]);
 
 
     }
@@ -86,11 +93,16 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
     protected void onResume() {
         super.onResume();
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        Log.d("AlarmActivity", "onResume");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         sensorManager.unregisterListener(this);
+        Log.d("AlarmActivity", "onPause");
+    }
+    public void setAlarmStopListener(AlarmStopListener listener) {
+        this.alarmStopListener = listener;
     }
 }

@@ -23,19 +23,26 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.mamn01_project.AlarmActivity;
 import com.example.mamn01_project.R;
 import com.example.mamn01_project.databinding.FragmentAlarmBinding;
 
 import java.util.Calendar;
 
-public class AlarmFragment extends Fragment {
-
+public class AlarmFragment extends Fragment implements AlarmStopListener {
+    private PendingIntent pending;
     private FragmentAlarmBinding binding;
+
+    private AlarmManager alarmManager;
+
+    private Intent intent;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         AlarmViewModel alarmViewModel =
                 new ViewModelProvider(this).get(AlarmViewModel.class);
+
+        ((AlarmActivity) getActivity()).setAlarmStopListener(this);
 
         binding = FragmentAlarmBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -62,10 +69,10 @@ public class AlarmFragment extends Fragment {
                 long target= cal.getTimeInMillis();
 
                 // Set up
-                AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
+                alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
                 // Set up broadcast so that the onReceive method of Receiver is invoked at specified time
-                Intent intent = new Intent(getContext(), Receiver.class);
-                PendingIntent pending = PendingIntent.getBroadcast(getActivity(), 234324243, intent, PendingIntent.FLAG_IMMUTABLE);
+                intent = new Intent(getContext(), Receiver.class);
+                pending = PendingIntent.getBroadcast(getActivity(), 234324243, intent, PendingIntent.FLAG_IMMUTABLE);
 
                 alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, target, pending);
 
@@ -85,11 +92,18 @@ public class AlarmFragment extends Fragment {
     }
 
 
-
+    public void stopAlarm() {
+        alarmManager.cancel(pending);
+        Toast.makeText(getActivity(), "Alarm stopped.", Toast.LENGTH_LONG).show();
+    }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+    @Override
+    public void onStopAlarm() {
+        stopAlarm();
     }
 }
