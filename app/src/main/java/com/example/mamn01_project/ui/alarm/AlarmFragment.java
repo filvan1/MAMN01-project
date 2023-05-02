@@ -32,8 +32,6 @@ public class AlarmFragment extends Fragment {
 
     private FragmentAlarmBinding binding;
 
-
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         AlarmViewModel alarmViewModel =
@@ -43,7 +41,6 @@ public class AlarmFragment extends Fragment {
         View root = binding.getRoot();
 
         final TextView textView = binding.textHome;
-        alarmViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
         // Need to call findViewById on the specific view that this fragment returns
 
@@ -58,7 +55,6 @@ public class AlarmFragment extends Fragment {
             int currentMinute = cal.get(Calendar.MINUTE);
 
             TimePickerDialog pickerDialog = new TimePickerDialog(getActivity(), (timePicker, hours, minutes) ->{
-                Log.d("", ""+hours+ " "+ minutes);
                 Calendar cal = Calendar.getInstance();
                 // TODO: Make sure time picked is set to next date if required.
                 cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),cal.get(Calendar.DATE), hours, minutes, 0);
@@ -75,7 +71,7 @@ public class AlarmFragment extends Fragment {
 
                 Toast.makeText(getActivity(), "Alarm set for " + hours + ":" + minutes + ".", Toast.LENGTH_LONG).show();
 
-            }, currentHour, currentMinute, false);
+            }, currentHour, currentMinute, true);
 
 
 
