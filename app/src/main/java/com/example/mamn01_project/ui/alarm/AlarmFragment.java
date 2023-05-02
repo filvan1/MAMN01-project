@@ -32,8 +32,6 @@ public class AlarmFragment extends Fragment {
 
     private FragmentAlarmBinding binding;
 
-
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         AlarmViewModel alarmViewModel =
@@ -43,26 +41,37 @@ public class AlarmFragment extends Fragment {
         View root = binding.getRoot();
 
         final TextView textView = binding.textHome;
-        alarmViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
         // Need to call findViewById on the specific view that this fragment returns
+
         Button button = (Button) root.findViewById(R.id.alarm_button);
 
+        // Alarm button
         button.setOnClickListener(new View.OnClickListener() {
 
+            // Use Calendar to convert specific dates:hours:minutes to miliseconds.
             Calendar cal = Calendar.getInstance();
             int currentHour = cal.get(Calendar.HOUR_OF_DAY);
             int currentMinute = cal.get(Calendar.MINUTE);
 
             TimePickerDialog pickerDialog = new TimePickerDialog(getActivity(), (timePicker, hours, minutes) ->{
-                Log.d("", ""+hours+ " "+ minutes);
-                AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
-                Intent intent = new Intent(getContext(),Receiver.class);
-                PendingIntent pending = PendingIntent.getBroadcast(getActivity(), 234324243, intent, PendingIntent.FLAG_IMMUTABLE);
-                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+(5 * 1000), pending);
-                Toast.makeText(getActivity(), "Alarm set in " + 10 + " seconds", Toast.LENGTH_LONG).show();
+                Calendar cal = Calendar.getInstance();
+                // TODO: Make sure time picked is set to next date if required.
+                cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),cal.get(Calendar.DATE), hours, minutes, 0);
 
-            }, currentHour, currentMinute, false);
+                long target= cal.getTimeInMillis();
+
+                // Set up
+                AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
+                // Set up broadcast so that the onReceive method of Receiver is invoked at specified time
+                Intent intent = new Intent(getContext(), Receiver.class);
+                PendingIntent pending = PendingIntent.getBroadcast(getActivity(), 234324243, intent, PendingIntent.FLAG_IMMUTABLE);
+
+                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, target, pending);
+
+                Toast.makeText(getActivity(), "Alarm set for " + hours + ":" + minutes + ".", Toast.LENGTH_LONG).show();
+
+            }, currentHour, currentMinute, true);
 
 
 

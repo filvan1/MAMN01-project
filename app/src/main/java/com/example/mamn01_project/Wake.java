@@ -38,7 +38,7 @@ public class Wake extends AppCompatActivity {
                 R.id.navigation_alarm, R.id.navigation_exercises)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_wake);
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
         if (!Settings.canDrawOverlays(this)){
