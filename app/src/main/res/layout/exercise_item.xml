@@ -11,7 +11,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Exercise Name"
-        android:textSize="16sp"
+        android:textSize="20sp"
+        android:layout_marginStart="16dp"
+        android:textColor="@color/darkest_blue"
+        android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,6 +22,7 @@
 
     <ToggleButton
         android:id="@+id/toggle_button"
+        style="@style/CustomToggleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
