@@ -9,7 +9,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.transition.TransitionInflater;
 
+import com.example.mamn01_project.R;
 import com.example.mamn01_project.databinding.FragmentAlarmBinding;
 
 public class AlarmFragment extends Fragment {
@@ -18,7 +20,13 @@ public class AlarmFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        AlarmViewModel alarmViewModel =
+        TransitionInflater transitionInflater = TransitionInflater.from(requireContext());
+        setEnterTransition(transitionInflater.inflateTransition(R.transition.slide_right));
+        setExitTransition(transitionInflater.inflateTransition(R.transition.slide_left));
+
+
+
+    AlarmViewModel alarmViewModel =
                 new ViewModelProvider(this).get(AlarmViewModel.class);
 
         binding = FragmentAlarmBinding.inflate(inflater, container, false);
