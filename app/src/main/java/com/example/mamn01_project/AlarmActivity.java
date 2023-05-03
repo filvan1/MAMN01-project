@@ -6,6 +6,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.content.Context;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -79,6 +80,7 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
         }
         if(overHead && toesTouched) {
             LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent("ALARM_STOP"));
+            getWindow().getDecorView().setBackgroundColor(Color.GREEN);
            }
         Log.d("AlarmActivity", "onSensorChanged: z=" + sensorEvent.values[2]);
         }
