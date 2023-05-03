@@ -95,7 +95,7 @@ public class AlarmFragment extends Fragment {
     public void stopAlarm() {
         alarmManager.cancel(pending);
         Toast.makeText(getActivity(), "Alarm stopped.", Toast.LENGTH_LONG).show();
-        LocalBroadcastManager.getInstance(requireActivity()).sendBroadcast(new Intent("ALARM_STOP"));
+        //LocalBroadcastManager.getInstance(requireActivity()).sendBroadcast(new Intent("ALARM_STOP"));
     }
 
     @Override

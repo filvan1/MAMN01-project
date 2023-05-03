@@ -65,7 +65,7 @@ public class Wake extends AppCompatActivity {
                 }
             }
         };
-        LocalBroadcastManager.getInstance(this).registerReceiver(alarmStopReceiver, new IntentFilter("ALARM_STOP"));
+        //LocalBroadcastManager.getInstance(this).registerReceiver(alarmStopReceiver, new IntentFilter("ALARM_STOP"));
     }
 
 
