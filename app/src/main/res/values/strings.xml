@@ -23,5 +23,5 @@
     <string name="change_alarm">Change alarm</string>
     <string name="skip_alarm">Skip alarm</string>
     <string name="alarmtime">7:30</string>
-    <string name="alarm">your next alarm is set to</string>
+    <string name="alarm">Your next alarm is set to</string>
 </resources>

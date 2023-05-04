@@ -17,12 +17,17 @@ import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.Toast;
+import android.media.MediaPlayer;
 
 public class AlarmActivity extends AppCompatActivity implements SensorEventListener {
     private SensorManager sensorManager;
     private  Sensor accelerometer;
+    private MediaPlayer mediaPlayer;
+
 
     /*Dessa variabler är temporära här för att testa solhälsning. Denna data ska komma från en
     separat class för varje övning sen */
@@ -34,11 +39,28 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
 * accelerometern. Sätter även upp rätt layout när aktiviteten startas */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getSupportActionBar().hide();
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         showWhenLocked();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm);
+
+        mediaPlayer = MediaPlayer.create(this, R.raw.waveswav);
+        if(mediaPlayer != null) {
+            mediaPlayer.start();
+        } else {
+            Log.e("AlarmActivity", "Error creating media player");
+        }
+        //Till knappen när larmet går
+        Button yourButton = findViewById(R.id.start_button);
+        yourButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Inte implementerat ännu
+            }
+        });
+
 
         Toast.makeText(this, "Alarm....", Toast.LENGTH_LONG).show();
         Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -80,6 +102,7 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
         }
         if(overHead && toesTouched) {
             LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent("ALARM_STOP"));
+            mediaPlayer.stop();
             getWindow().getDecorView().setBackgroundColor(Color.GREEN);
            }
         Log.d("AlarmActivity", "onSensorChanged: z=" + sensorEvent.values[2]);
@@ -103,5 +126,13 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
         super.onPause();
         sensorManager.unregisterListener(this);
         Log.d("AlarmActivity", "onPause");
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
     }
 }

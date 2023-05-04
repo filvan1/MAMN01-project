@@ -4,14 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/nw_background"
+    android:background="@drawable/alarm_background"
     tools:context=".ui.alarm.AlarmFragment">
+
 
     <TextView
         android:id="@+id/text_home"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="6dp"
         android:text="@string/alarmtime"
         android:textAlignment="center"
         android:textColor="@color/white"
@@ -38,7 +39,9 @@
             android:layout_weight="1"
             android:layout_marginHorizontal="10dp"
             android:backgroundTint="@color/nw_skipbutton"
-            android:text="@string/skip_alarm" />
+            android:text="@string/skip_alarm"
+            android:elevation="4dp"
+            android:translationZ="2dp" />
 
         <Button
             android:id="@+id/alarm_button"
@@ -48,7 +51,9 @@
             android:layout_marginHorizontal="10dp"
             android:backgroundTint="@color/nw_primary"
             android:text="@string/change_alarm"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:elevation="4dp"
+            android:translationZ="2dp"/>
 
     </LinearLayout>
 
@@ -58,6 +63,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/alarm"
+        android:textStyle="bold"
+        android:textSize="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"

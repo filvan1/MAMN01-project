@@ -55,6 +55,8 @@ public class Wake extends AppCompatActivity {
                     Uri.parse("package:" + getPackageName()));
 
         }
+        //Tar bort top action bar, går att fixa mer permanent i xml filerna
+        getSupportActionBar().hide();
         alarmStopReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
