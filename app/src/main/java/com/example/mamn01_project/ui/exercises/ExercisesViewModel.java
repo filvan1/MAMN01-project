@@ -27,8 +27,6 @@ public class ExercisesViewModel extends ViewModel {
         startingExercises.add(new SunSalutationExercise("Solhälsning"));
         startingExercises.add(new WalkStepsExercise("Beachwalk"));
 
-
-
         exercises.setValue(startingExercises);
 
 
