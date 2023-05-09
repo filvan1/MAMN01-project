@@ -1,16 +1,6 @@
 package com.example.mamn01_project.ui.alarm;
 
-import static android.content.Context.ALARM_SERVICE;
-
-import static androidx.core.content.ContextCompat.getSystemService;
-
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.app.TimePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
-import android.provider.AlarmClock;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +12,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.transition.TransitionInflater;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.example.mamn01_project.R;
 import com.example.mamn01_project.AlarmActivity;
 import com.example.mamn01_project.R;
 import com.example.mamn01_project.databinding.FragmentAlarmBinding;
@@ -40,7 +32,13 @@ public class AlarmFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        AlarmViewModel alarmViewModel =
+        TransitionInflater transitionInflater = TransitionInflater.from(requireContext());
+        setEnterTransition(transitionInflater.inflateTransition(R.transition.slide_right));
+        setExitTransition(transitionInflater.inflateTransition(R.transition.slide_left));
+
+
+
+    AlarmViewModel alarmViewModel =
                 new ViewModelProvider(this).get(AlarmViewModel.class);
 
 
