@@ -22,4 +22,10 @@
     <color name="dark_blue">#1241EF</color>
     <color name="vibrant_orange">#FFA500</color>
 
+    <color name="blue_primary">#2196F3</color>
+    <color name="blue_primary_dark">#1976D2</color>
+    <color name="blue_accent">#03A9F4</color>
+    <color name="blue_playful">#38DAF1</color>
+    <color name="darkest_blue">#0A21F0</color>
+    <color name="blue_background">#A3D7F4</color>
 </resources>

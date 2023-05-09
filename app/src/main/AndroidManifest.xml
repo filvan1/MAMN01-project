@@ -13,8 +13,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MAMN01_project"
-        tools:targetApi="31" >
+        android:theme="@style/Theme.MAMN01_project.Fullscreen"
+        tools:targetApi="31">>
         <activity
             android:name=".AlarmActivity"
             android:exported="false">
@@ -25,6 +25,8 @@
 
         <receiver android:name=".ui.alarm.Receiver" />
 
+
+        <!-- Theme.MAMN01_project -->
         <activity
             android:name=".Wake"
             android:exported="true"

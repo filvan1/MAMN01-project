@@ -4,16 +4,29 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ExercisesViewModel extends ViewModel {
 
-    private final MutableLiveData<String> mText;
+    private MutableLiveData <List<Exercise>> exercises;
 
     public ExercisesViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is exercises fragment");
+        exercises = new MutableLiveData<>();
+        List<Exercise> startingExercises = new ArrayList<>();
+        startingExercises.add(new Exercise("Solhälsning"));
+        startingExercises.add(new Exercise("Krigaren"));
+        startingExercises.add(new Exercise("Ljus"));
+        startingExercises.add(new Exercise("Övning"));
+        startingExercises.add(new Exercise("Övning2"));
+
+
+
+        exercises.setValue(startingExercises);
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public LiveData<List<Exercise>> getExercises() {
+        return exercises;
+
     }
 }
