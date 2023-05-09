@@ -41,11 +41,6 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
     private boolean toesTouched = false;
     private boolean exerciseFinished = false;
 
-    List<Exercise> exercisePool = Arrays.asList(
-            new WalkStepsExercise("beachWalk", 20)
-            // Lägg till fler exercises här
-    );
-
 /* Metoden kallas när aktiviteten startas. Kallar ShowWhenLocked() som gör att det kan visas även när
 * mobilen är låst. Vi aktiverar sensormanager som tar hand om sensorerna och aktiverar
 * accelerometern. Sätter även upp rätt layout när aktiviteten startas */

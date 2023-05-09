@@ -25,6 +25,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.example.mamn01_project.R;
 import com.example.mamn01_project.AlarmActivity;
 import com.example.mamn01_project.R;
+import com.example.mamn01_project.Wake;
 import com.example.mamn01_project.databinding.FragmentAlarmBinding;
 
 import java.util.Calendar;
@@ -76,7 +77,8 @@ public class AlarmFragment extends Fragment {
                 // Set up
                 alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
                 // Set up broadcast so that the onReceive method of Receiver is invoked at specified time
-                intent = new Intent(getContext(), Receiver.class);
+                intent = new Intent(getResources().getString(R.string.intent_alarm_trigger));
+                //intent.setAction(getResources().getString(R.string.intent_alarm_trigger));
                 pending = PendingIntent.getBroadcast(getActivity(), 234324243, intent, PendingIntent.FLAG_IMMUTABLE);
 
                 alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, target, pending);
@@ -94,13 +96,6 @@ public class AlarmFragment extends Fragment {
         });
 
         return root;
-    }
-
-
-    public void stopAlarm() {
-        alarmManager.cancel(pending);
-        Toast.makeText(getActivity(), "Alarm stopped.", Toast.LENGTH_LONG).show();
-        //LocalBroadcastManager.getInstance(requireActivity()).sendBroadcast(new Intent("ALARM_STOP"));
     }
 
     @Override

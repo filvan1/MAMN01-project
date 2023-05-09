@@ -23,9 +23,6 @@
                 android:value="" />
         </activity>
 
-        <receiver android:name=".ui.alarm.Receiver" />
-
-
         <!-- Theme.MAMN01_project -->
         <activity
             android:name=".Wake"
