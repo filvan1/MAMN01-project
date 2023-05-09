@@ -23,6 +23,12 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.media.MediaPlayer;
 
+import com.example.mamn01_project.ui.exercises.Exercise;
+import com.example.mamn01_project.ui.exercises.WalkStepsExercise;
+
+import java.util.Arrays;
+import java.util.List;
+
 public class AlarmActivity extends AppCompatActivity implements SensorEventListener {
     private SensorManager sensorManager;
     private  Sensor accelerometer;
@@ -35,11 +41,20 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
     private boolean toesTouched = false;
     private boolean exerciseFinished = false;
 
+    List<Exercise> exercisePool = Arrays.asList(
+            new WalkStepsExercise("beachWalk", 20)
+            // Lägg till fler exercises här
+    );
+
 /* Metoden kallas när aktiviteten startas. Kallar ShowWhenLocked() som gör att det kan visas även när
 * mobilen är låst. Vi aktiverar sensormanager som tar hand om sensorerna och aktiverar
 * accelerometern. Sätter även upp rätt layout när aktiviteten startas */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        //Nya  när alarmet startar för exercises
+      //  Random random = new Random();
+      //  Exercise currentExercise = exercisePool.get(random.nextInt(exercisePool.size()));
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         showWhenLocked();
@@ -109,6 +124,12 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
             }
             Log.d("AlarmActivity", "onSensorChanged: z=" + sensorEvent.values[2]);
         }
+        /* Nya kollen
+        if (currentExercise.isCompleted()) {
+            // Stop the alarm
+        }
+        */
+
 
         }
 

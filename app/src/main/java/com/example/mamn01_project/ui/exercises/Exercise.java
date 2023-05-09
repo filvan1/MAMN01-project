@@ -1,6 +1,6 @@
 package com.example.mamn01_project.ui.exercises;
 
-public class Exercise {
+public abstract class Exercise {
     private String name;
     private boolean enabled;
 
@@ -22,6 +22,8 @@ public class Exercise {
     }
 
     public void setEnabled(boolean enabled) {
+
         this.enabled = enabled;
     }
+    public abstract boolean isCompleted();
 }
