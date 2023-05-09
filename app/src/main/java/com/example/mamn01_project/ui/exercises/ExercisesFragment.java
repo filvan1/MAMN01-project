@@ -30,9 +30,7 @@ public class ExercisesFragment extends Fragment {
         setEnterTransition(transitionInflater.inflateTransition(R.transition.slide_right));
         setExitTransition(transitionInflater.inflateTransition(R.transition.slide_left));
 
-        ExercisesViewModel dashboardViewModel =
-        ExercisesViewModel exercisesViewModel =
-                new ViewModelProvider(this).get(ExercisesViewModel.class);
+        ExercisesViewModel exercisesViewModel = new ViewModelProvider(this).get(ExercisesViewModel.class);
 
         binding = FragmentExercisesBinding.inflate(inflater, container, false);
         View root = binding.getRoot();

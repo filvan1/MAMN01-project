@@ -33,13 +33,13 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
     separat class för varje övning sen */
     private boolean overHead = false;
     private boolean toesTouched = false;
+    private boolean exerciseFinished = false;
 
 /* Metoden kallas när aktiviteten startas. Kallar ShowWhenLocked() som gör att det kan visas även när
 * mobilen är låst. Vi aktiverar sensormanager som tar hand om sensorerna och aktiverar
 * accelerometern. Sätter även upp rätt layout när aktiviteten startas */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        getSupportActionBar().hide();
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         showWhenLocked();
@@ -94,18 +94,22 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
     * alarmet och skickar tillbaka braodcast att alarmet är stoppat.  */
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        float z = sensorEvent.values[2];
-        if(!overHead && z > 9) {
-            overHead = true;
-        }else if(overHead && z < -9) {
-            toesTouched = true;
+        if(!exerciseFinished){
+            float z = sensorEvent.values[2];
+            if(!overHead && z > 9) {
+                overHead = true;
+            }else if(overHead && z < -9) {
+                toesTouched = true;
+            }
+            if(overHead && toesTouched) {
+                LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent("ALARM_STOP"));
+                mediaPlayer.stop();
+                exerciseFinished = true;
+                getWindow().getDecorView().setBackgroundColor(Color.GREEN);
+            }
+            Log.d("AlarmActivity", "onSensorChanged: z=" + sensorEvent.values[2]);
         }
-        if(overHead && toesTouched) {
-            LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent("ALARM_STOP"));
-            mediaPlayer.stop();
-            getWindow().getDecorView().setBackgroundColor(Color.GREEN);
-           }
-        Log.d("AlarmActivity", "onSensorChanged: z=" + sensorEvent.values[2]);
+
         }
 
 
