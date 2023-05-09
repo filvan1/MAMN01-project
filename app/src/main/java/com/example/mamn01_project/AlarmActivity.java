@@ -24,10 +24,13 @@ import android.widget.Toast;
 import android.media.MediaPlayer;
 
 import com.example.mamn01_project.ui.exercises.Exercise;
+import com.example.mamn01_project.ui.exercises.SunSalutationExercise;
 import com.example.mamn01_project.ui.exercises.WalkStepsExercise;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class AlarmActivity extends AppCompatActivity implements SensorEventListener {
     private SensorManager sensorManager;
@@ -41,20 +44,39 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
     private boolean toesTouched = false;
     private boolean exerciseFinished = false;
 
+    private Exercise currentExercise;
+
+    private List<Exercise> enabledExercises;
+
 /* Metoden kallas när aktiviteten startas. Kallar ShowWhenLocked() som gör att det kan visas även när
 * mobilen är låst. Vi aktiverar sensormanager som tar hand om sensorerna och aktiverar
 * accelerometern. Sätter även upp rätt layout när aktiviteten startas */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        //Nya  när alarmet startar för exercises
-      //  Random random = new Random();
-      //  Exercise currentExercise = exercisePool.get(random.nextInt(exercisePool.size()));
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         showWhenLocked();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm);
+
+        if (getIntent().hasExtra("enabledExerciseNames")) {
+            List<String> enabledExerciseNames = getIntent().getStringArrayListExtra("enabledExerciseNames");
+            if (enabledExerciseNames != null && !enabledExerciseNames.isEmpty()) {
+                enabledExercises = new ArrayList<>();
+                for (String exerciseName : enabledExerciseNames) {
+                    Exercise exercise = createExerciseByName(exerciseName);
+                    if (exercise != null) {
+                        enabledExercises.add(exercise);
+                    }
+                }
+            }
+        }
+
+        if (enabledExercises != null && !enabledExercises.isEmpty()) {
+            Random random = new Random();
+            currentExercise = enabledExercises.get(random.nextInt(enabledExercises.size()));
+        }
 
         mediaPlayer = MediaPlayer.create(this, R.raw.waveswav);
         if(mediaPlayer != null) {
@@ -86,6 +108,17 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
 
     }
 
+    private Exercise createExerciseByName(String exerciseName) {
+        if (exerciseName.equals("WalkStepsExercise")) {
+            return new WalkStepsExercise("WalkStepsExercise", 20);
+        } else if (exerciseName.equals("SunSalutationExercise")) {
+            return new SunSalutationExercise("SunSalutationExercise");
+        }
+
+        return null;
+    }
+
+
     /* Metoden ska se till att vi får visa saker trots att mobilen är låst*/
 
     private void showWhenLocked(){
@@ -104,29 +137,20 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
     * alarmet och skickar tillbaka braodcast att alarmet är stoppat.  */
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        if(!exerciseFinished){
-            float z = sensorEvent.values[2];
-            if(!overHead && z > 9) {
-                overHead = true;
-            }else if(overHead && z < -9) {
-                toesTouched = true;
-            }
-            if(overHead && toesTouched) {
+        if (currentExercise != null && !currentExercise.isCompleted()) {
+            currentExercise.processSensorEvent(sensorEvent);
+
+            if (currentExercise.isCompleted()) {
+                // Stop the alarm
                 LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent("ALARM_STOP"));
                 mediaPlayer.stop();
-                exerciseFinished = true;
                 getWindow().getDecorView().setBackgroundColor(Color.GREEN);
             }
-            Log.d("AlarmActivity", "onSensorChanged: z=" + sensorEvent.values[2]);
         }
-        /* Nya kollen
-        if (currentExercise.isCompleted()) {
-            // Stop the alarm
-        }
-        */
+    }
 
 
-        }
+
 
 
     @Override

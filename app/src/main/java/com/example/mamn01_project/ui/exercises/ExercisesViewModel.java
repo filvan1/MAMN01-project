@@ -11,6 +11,16 @@ public class ExercisesViewModel extends ViewModel {
 
     private MutableLiveData <List<Exercise>> exercises;
 
+    private MutableLiveData<List<Exercise>>  enabledExercises= new MutableLiveData<>(new ArrayList<>());
+
+    public LiveData<List<Exercise>> getEnabledExercises() {
+        return enabledExercises;
+    }
+
+    public void setEnabledExercises(List<Exercise> exercises) {
+        enabledExercises.setValue(exercises);
+    }
+
     public ExercisesViewModel() {
         exercises = new MutableLiveData<>();
         List<Exercise> startingExercises = new ArrayList<>();
@@ -19,6 +29,8 @@ public class ExercisesViewModel extends ViewModel {
 
 
         exercises.setValue(startingExercises);
+
+
     }
 
     public LiveData<List<Exercise>> getExercises() {

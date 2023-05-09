@@ -31,6 +31,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.mamn01_project.databinding.ActivityWakeBinding;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -38,6 +39,7 @@ public class Wake extends AppCompatActivity {
 
     private ActivityWakeBinding binding;
     private BroadcastReceiver alarmStopReceiver;
+    private ExercisesViewModel exercisesViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,14 +67,22 @@ public class Wake extends AppCompatActivity {
 
         registerReceiver(receiver, new IntentFilter(getResources().getString(R.string.intent_alarm_trigger)));
 
-        ExercisesViewModel model = new ViewModelProvider(this).get(ExercisesViewModel.class);
 
-        model.getExercises();
+        exercisesViewModel = new ViewModelProvider(this).get(ExercisesViewModel.class);
+        //model.getExercises();
 
-        List<Exercise> exercisePool = Arrays.asList(
+        exercisesViewModel.getEnabledExercises().observe(this, enabledExercises -> {
+            // You can use the enabledExercises list here
+            // For example, update your exercisePool variable based on the enabled exercises
+            for (Exercise exercise : enabledExercises) {
+                Log.d("EnabledExercises", exercise.getName() + ": " + (exercise.isEnabled() ? "Enabled" : "Disabled"));
+            }
+        });
+
+       /* List<Exercise> exercisePool = Arrays.asList(
                 new WalkStepsExercise("beachWalk", 20)
                 // Lägg till fler exercises här
-        );
+        ); */
 
         //LocalBroadcastManager.getInstance(this).registerReceiver(alarmStopReceiver, new IntentFilter("ALARM_STOP"));
     }
@@ -88,6 +98,15 @@ public class Wake extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             // Set up the separate alarm screen Activity
             Intent nextActivity = new Intent(context, AlarmActivity.class);
+
+            List<Exercise> enabledExercises = exercisesViewModel.getEnabledExercises().getValue();
+            if (enabledExercises != null) {
+                ArrayList<String> enabledExerciseNames = new ArrayList<>();
+                for (Exercise exercise : enabledExercises) {
+                    enabledExerciseNames.add(exercise.getClass().getSimpleName());
+                }
+                nextActivity.putStringArrayListExtra("enabledExerciseNames", enabledExerciseNames);
+            }
 
             // Make sure that the alarm activity starts properly
             nextActivity.setFlags(

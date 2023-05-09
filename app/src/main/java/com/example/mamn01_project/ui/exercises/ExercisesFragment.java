@@ -23,6 +23,7 @@ public class ExercisesFragment extends Fragment {
     private FragmentExercisesBinding binding;
     private ExerciseAdapter adapter;
 
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -30,7 +31,7 @@ public class ExercisesFragment extends Fragment {
         setEnterTransition(transitionInflater.inflateTransition(R.transition.slide_right));
         setExitTransition(transitionInflater.inflateTransition(R.transition.slide_left));
 
-        ExercisesViewModel exercisesViewModel = new ViewModelProvider(this).get(ExercisesViewModel.class);
+        ExercisesViewModel exercisesViewModel = new ViewModelProvider(requireActivity()).get(ExercisesViewModel.class);
 
         binding = FragmentExercisesBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -38,7 +39,7 @@ public class ExercisesFragment extends Fragment {
         RecyclerView recyclerView = binding.recyclerView;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        adapter = new ExerciseAdapter(new ArrayList<>());
+        adapter = new ExerciseAdapter(new ArrayList<>(),exercisesViewModel);
         recyclerView.setAdapter(adapter);
 
         exercisesViewModel.getExercises().observe(getViewLifecycleOwner(), exercises -> {

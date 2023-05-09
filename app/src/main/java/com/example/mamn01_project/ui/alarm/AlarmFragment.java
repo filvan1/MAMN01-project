@@ -98,6 +98,13 @@ public class AlarmFragment extends Fragment {
         return root;
     }
 
+    private void stopAlarm() {
+        if (alarmManager != null && pending != null) {
+            alarmManager.cancel(pending);
+            Toast.makeText(getActivity(), "Alarm stopped.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

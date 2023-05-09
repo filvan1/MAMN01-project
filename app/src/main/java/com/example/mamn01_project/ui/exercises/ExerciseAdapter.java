@@ -16,9 +16,10 @@ import java.util.List;
 public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.ViewHolder> {
 
     private List<Exercise> exerciseList;
-
-    public ExerciseAdapter(List<Exercise> exerciseList) {
+    private ExercisesViewModel exercisesViewModel;
+    public ExerciseAdapter(List<Exercise> exerciseList, ExercisesViewModel exercisesViewModel) {
         this.exerciseList = exerciseList;
+        this.exercisesViewModel = exercisesViewModel;
     }
 
     @NonNull
@@ -34,6 +35,17 @@ public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.ViewHo
         Exercise exercise = exerciseList.get(position);
         holder.exerciseName.setText(exercise.getName());
         holder.toggleButton.setChecked(exercise.isEnabled());
+
+        holder.toggleButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            exercise.setEnabled(isChecked);
+            List<Exercise> enabledExercises = exercisesViewModel.getEnabledExercises().getValue();
+            if (isChecked && !enabledExercises.contains(exercise)) {
+                enabledExercises.add(exercise);
+            } else if (!isChecked) {
+                enabledExercises.remove(exercise);
+            }
+            exercisesViewModel.setEnabledExercises(enabledExercises);
+        });
 
 
     }
