@@ -125,10 +125,10 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
      * Det var mycket svårare att skicka objekten direkt därför blev denna lösning lättare.
      */
     private Exercise createExerciseByName(String exerciseName) {
-        if (exerciseName.equals("WalkStepsExercise")) {
-            return new WalkStepsExercise("WalkStepsExercise", 20);
-        } else if (exerciseName.equals("SunSalutationExercise")) {
-            return new SunSalutationExercise("SunSalutationExercise");
+        if (exerciseName.equals("Beachwalk")) {
+            return new WalkStepsExercise("Beachwalk");
+        } else if (exerciseName.equals("Solhälsning")) {
+            return new SunSalutationExercise("Solhälsning");
         }
 
         return null;

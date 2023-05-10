@@ -32,7 +32,5 @@ public abstract class Exercise {
     }
     public abstract boolean isCompleted();
 
-    public void processSensorEvent(SensorEvent sensorEvent) {
-
-    }
+    public abstract void processSensorEvent(SensorEvent sensorEvent);
 }

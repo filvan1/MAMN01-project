@@ -2,6 +2,7 @@ package com.example.mamn01_project.ui.exercises;
 
 import android.annotation.SuppressLint;
 import android.hardware.Sensor;
+import android.hardware.SensorEvent;
 import android.os.Parcel;
 
 import androidx.annotation.NonNull;
@@ -24,5 +25,10 @@ public class SunSalutationExercise extends Exercise{
     @Override
     public boolean isCompleted() {
         return false;
+    }
+
+    @Override
+    public void processSensorEvent(SensorEvent sensorEvent) {
+
     }
 }

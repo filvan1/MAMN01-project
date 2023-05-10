@@ -22,7 +22,7 @@ public class WalkStepsExercise extends Exercise {
     private boolean completed;
 
 
-    public WalkStepsExercise(String name, int targetSteps) {
+    public WalkStepsExercise(String name) {
         super(name);
         this.initialSteps = -1;
         this.currentSteps = 0;
@@ -53,7 +53,7 @@ public class WalkStepsExercise extends Exercise {
     }
     @Override
     public void processSensorEvent(SensorEvent sensorEvent) {
-        //Måste få in rätt sensor här från alarmactivity
+        //Ser till så att det är rätt sensor som kommer in
         if (sensorEvent.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
             if (initialSteps == -1) {
                 initialSteps = sensorEvent.values[0];
