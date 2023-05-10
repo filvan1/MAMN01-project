@@ -34,7 +34,11 @@ import com.example.mamn01_project.databinding.ActivityWakeBinding;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+/**
+ * Wake är huvudaktiviteten i applikationen. Den sköter också navigationen mellan
+ * alarm och exercise fragmenten.
+ *
+ * */
 public class Wake extends AppCompatActivity {
 
     private ActivityWakeBinding binding;
@@ -67,10 +71,18 @@ public class Wake extends AppCompatActivity {
 
         registerReceiver(receiver, new IntentFilter(getResources().getString(R.string.intent_alarm_trigger)));
 
-
+        /**
+         * Initialliserar en exerciseViewModel genom att skapa en instans av ExerciseViewModel.
+         * */
         exercisesViewModel = new ViewModelProvider(this).get(ExercisesViewModel.class);
         //model.getExercises();
 
+
+        /**
+         * Initialliserar en observer för att upptäcka förändringar i enabled exercises. Metoden tar två argument
+         * först den som den som äger aktiviteten(lifecycle owner) vilket är Wake(this) och en function som exekveras
+         * om data förändras.
+         * */
         exercisesViewModel.getEnabledExercises().observe(this, enabledExercises -> {
             // You can use the enabledExercises list here
             // For example, update your exercisePool variable based on the enabled exercises
@@ -78,11 +90,6 @@ public class Wake extends AppCompatActivity {
                 Log.d("EnabledExercises", exercise.getName() + ": " + (exercise.isEnabled() ? "Enabled" : "Disabled"));
             }
         });
-
-       /* List<Exercise> exercisePool = Arrays.asList(
-                new WalkStepsExercise("beachWalk", 20)
-                // Lägg till fler exercises här
-        ); */
 
         //LocalBroadcastManager.getInstance(this).registerReceiver(alarmStopReceiver, new IntentFilter("ALARM_STOP"));
     }
@@ -98,7 +105,12 @@ public class Wake extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             // Set up the separate alarm screen Activity
             Intent nextActivity = new Intent(context, AlarmActivity.class);
-
+            /**
+             * Hämtar först en lista av enabled exercises med hjälp av vår viewmodel som vi etablerade oven i klassen.
+             * Om det finns enabled exercises så skapar vi en arraylist med namnen på alla exercises. Sedan skickar
+             * vi iväg detta med ett intent till AlarmActivity. (Läs kommentar i onCreate och createExerciseByName i
+             * AlarmActivity där datan behandlas.)
+             * */
             List<Exercise> enabledExercises = exercisesViewModel.getEnabledExercises().getValue();
             if (enabledExercises != null) {
                 ArrayList<String> enabledExerciseNames = new ArrayList<>();

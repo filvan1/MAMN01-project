@@ -35,6 +35,10 @@ import java.util.Random;
 public class AlarmActivity extends AppCompatActivity implements SensorEventListener {
     private SensorManager sensorManager;
     private  Sensor accelerometer;
+
+    private Sensor gyroscope;
+
+    private Sensor stepCounter;
     private MediaPlayer mediaPlayer;
 
 
@@ -48,14 +52,21 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
 
     private List<Exercise> enabledExercises;
 
-/* Metoden kallas när aktiviteten startas. Kallar ShowWhenLocked() som gör att det kan visas även när
-* mobilen är låst. Vi aktiverar sensormanager som tar hand om sensorerna och aktiverar
-* accelerometern. Sätter även upp rätt layout när aktiviteten startas */
+    /**
+     * Metoden kallas när aktiviteten startas, då börjar den med att aktivera
+     * sensormanager, accelerometer, gyro, step counter och media player. Den tar sedan emot alla enabled
+     * exercises från ett intent skickas från Wake när AlarmActivity startas.
+     * Intentet används helt enkelt för att skicka en lista av enabled exercises från
+     * Wake aktiviteten till AlarmActivity. Sedan går vi igenom den listan i nästa kodblock
+     * och väljer ut en av dem. Under det aktiverar vi ljudet när alarmet går.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        stepCounter = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         showWhenLocked();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm);
@@ -107,7 +118,12 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
         Log.d("AlarmActivity", "onCreate");
 
     }
-
+    /**
+     * Skapar ett exercise object baserat på namnet(string). Exercise objektet retureras
+     * om namnet finns annars returerar null. Denna metod behövs i oncreate när vi tar emot
+     * listan från wake, då måste vi konvertera listan av enabled exercise namn till Exercise objekt.
+     * Det var mycket svårare att skicka objekten direkt därför blev denna lösning lättare.
+     */
     private Exercise createExerciseByName(String exerciseName) {
         if (exerciseName.equals("WalkStepsExercise")) {
             return new WalkStepsExercise("WalkStepsExercise", 20);
@@ -135,11 +151,26 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
     * i Wake har vi en braodcast reviecer som kan fånga upp detta och onRecieve metoden körs. Den
     * kommer i sin tur att kalla på stopAlarm metoden i AlarmFragment. stopAlarm metoden stoppar
     * alarmet och skickar tillbaka braodcast att alarmet är stoppat.  */
+
+/**
+ * onSensorChanged kallas när någon sensor får ett förändrat värde, så väldigt ofta.
+ * */
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         if (currentExercise != null && !currentExercise.isCompleted()) {
+            /**
+             * Den här koden är väldigt viktig. Istället för att implementera en sensorEventListener i
+             * varje subklass av exercise så kan vi istället använda metoden processSensorEvent i varje subclass
+             * på detta vis kan vi gå in i currentExercise (som är vår utvalde exercise när larmet går) och ändra
+             * på värden. Exemelvis så kan vi ändra på currentSteps när sensorn i denna klassen känner att vi tar
+             * ett steg. Nedsidan är att vi måste implementera processSensorEvent i varje subklass men uppsidan är
+             * mycket större då vi slipper ha en SensorEventListener i varje subklass och en mycket mer avancerad
+             * programstruktur
+             * */
             currentExercise.processSensorEvent(sensorEvent);
-
+            /**
+             * Vi kollar hela tiden om currentExercise är färdig.
+             * */
             if (currentExercise.isCompleted()) {
                 // Stop the alarm
                 LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent("ALARM_STOP"));
@@ -162,6 +193,8 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
     protected void onResume() {
         super.onResume();
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, gyroscope, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, stepCounter, SensorManager.SENSOR_DELAY_NORMAL);
         Log.d("AlarmActivity", "onResume");
     }
 
