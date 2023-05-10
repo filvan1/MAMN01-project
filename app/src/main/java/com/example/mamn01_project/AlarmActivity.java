@@ -87,6 +87,7 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
         if (enabledExercises != null && !enabledExercises.isEmpty()) {
             Random random = new Random();
             currentExercise = enabledExercises.get(random.nextInt(enabledExercises.size()));
+            Log.d("AlarmActivity", "Current exercise: " + currentExercise.getName());
         }
 
         mediaPlayer = MediaPlayer.create(this, R.raw.waveswav);
@@ -157,6 +158,7 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
  * */
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
+        Log.d("AlarmActivity", "onSensorChanged called");
         if (currentExercise != null && !currentExercise.isCompleted()) {
             /**
              * Den här koden är väldigt viktig. Istället för att implementera en sensorEventListener i

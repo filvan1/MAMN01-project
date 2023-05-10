@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 
 
 public class WalkStepsExercise extends Exercise {
+
     private final float TARGET_STEPS = 20;
 
     /**Tydligen kommer stegräknaren att ge antalet steg sedan telefonen startades om så vi behöver
@@ -53,6 +54,7 @@ public class WalkStepsExercise extends Exercise {
     }
     @Override
     public void processSensorEvent(SensorEvent sensorEvent) {
+        Log.d("SunSalutationExercise", "processSensorEvent called");
         //Ser till så att det är rätt sensor som kommer in
         if (sensorEvent.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
             if (initialSteps == -1) {

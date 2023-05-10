@@ -3,6 +3,7 @@ package com.example.mamn01_project.ui.exercises;
 import android.annotation.SuppressLint;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -28,6 +29,7 @@ public class SunSalutationExercise extends Exercise {
 
     @Override
     public void processSensorEvent(SensorEvent sensorEvent) {
+        Log.d("WalkStepsExercise", "processSensorEvent called");
         if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             float zValue = sensorEvent.values[2];
 
