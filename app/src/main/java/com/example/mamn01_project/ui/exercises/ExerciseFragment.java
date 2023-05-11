@@ -7,8 +7,10 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.mamn01_project.FragmentEventListener;
 import com.example.mamn01_project.R;
 
 /**
@@ -25,7 +27,13 @@ public class ExerciseFragment extends Fragment {
 
     // TODO: Rename and change types of parameters
     private String mParam1;
-    private String mParam2;
+    private int mParam2;
+    private FragmentEventListener listener;
+
+    public void setOnEventListener(FragmentEventListener l){
+        this.listener = l;
+    }
+
 
     public ExerciseFragment() {
         // Required empty public constructor
@@ -40,11 +48,11 @@ public class ExerciseFragment extends Fragment {
      * @return A new instance of fragment ExerciseFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ExerciseFragment newInstance(String param1, String param2) {
+    public static ExerciseFragment newInstance(String param1, int param2) {
         ExerciseFragment fragment = new ExerciseFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putInt(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -54,7 +62,7 @@ public class ExerciseFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mParam2 = getArguments().getInt(ARG_PARAM2);
         }
 
     }
@@ -62,10 +70,21 @@ public class ExerciseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_exercise, container, false);
-        TextView test = (TextView) view.findViewById(R.id.test);
-        test.setText(mParam1);
-        // Inflate the layout for this fragment
+        View view = inflater.inflate(mParam2, container, false);
+        if(mParam1 == null){
+            Button button = view.findViewById(R.id.start_button);
+            button.setOnClickListener(v -> {
+                if(listener != null){
+                    listener.onClick();
+                }
+
+            });
+        } else{
+            TextView field = view.findViewById(R.id.test);
+            field.setText(mParam1);
+        }
+
+                // Inflate the layout for this fragment
         return view;
     }
 }
