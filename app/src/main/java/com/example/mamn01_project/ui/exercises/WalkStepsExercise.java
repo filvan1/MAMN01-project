@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 
 public class WalkStepsExercise extends Exercise {
 
-    private final float TARGET_STEPS = 20;
+    private final float TARGET_STEPS = 10;
 
     /**Tydligen kommer stegräknaren att ge antalet steg sedan telefonen startades om så vi behöver
      * denna variabeln */
@@ -62,6 +62,17 @@ public class WalkStepsExercise extends Exercise {
             currentSteps = sensorEvent.values[0] - initialSteps;
             Log.d("BeachWalk", "processSensorEvent: steps " + currentSteps);
         }
+
+        //Alexander o Jacob
+        /*if (sensorEvent.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
+            if (sensorEvent.values[0] == TARGET_STEPS) {
+                setCompleted(true);
+            } else {
+                currentSteps = sensorEvent.values[0];
+            }
+            Log.d("BeachWalk", "processSensorEvent: steg " + sensorEvent.values[0]);
+        }*/
+
     }
 }
 
