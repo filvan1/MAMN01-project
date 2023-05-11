@@ -29,7 +29,6 @@ public class SunSalutationExercise extends Exercise {
 
     @Override
     public void processSensorEvent(SensorEvent sensorEvent) {
-        Log.d("WalkStepsExercise", "processSensorEvent called");
         if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             float zValue = sensorEvent.values[2];
 

@@ -70,7 +70,6 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
         showWhenLocked();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm);
-
         if (getIntent().hasExtra("enabledExerciseNames")) {
             List<String> enabledExerciseNames = getIntent().getStringArrayListExtra("enabledExerciseNames");
             if (enabledExerciseNames != null && !enabledExerciseNames.isEmpty()) {

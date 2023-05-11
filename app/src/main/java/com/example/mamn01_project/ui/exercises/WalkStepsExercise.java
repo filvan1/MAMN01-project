@@ -54,7 +54,6 @@ public class WalkStepsExercise extends Exercise {
     }
     @Override
     public void processSensorEvent(SensorEvent sensorEvent) {
-        Log.d("SunSalutationExercise", "processSensorEvent called");
         //Ser till så att det är rätt sensor som kommer in
         if (sensorEvent.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
             if (initialSteps == -1) {

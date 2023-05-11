@@ -115,7 +115,9 @@ public class Wake extends AppCompatActivity {
             if (enabledExercises != null) {
                 ArrayList<String> enabledExerciseNames = new ArrayList<>();
                 for (Exercise exercise : enabledExercises) {
-                    enabledExerciseNames.add(exercise.getClass().getSimpleName());
+
+
+                    enabledExerciseNames.add(exercise.getName());
                 }
                 nextActivity.putStringArrayListExtra("enabledExerciseNames", enabledExerciseNames);
             }
@@ -127,7 +129,8 @@ public class Wake extends AppCompatActivity {
                             | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                             | Intent.FLAG_ACTIVITY_NEW_TASK
             );
-            PendingIntent pending = PendingIntent.getActivity(context, 0, nextActivity, PendingIntent.FLAG_IMMUTABLE);
+                PendingIntent pending = PendingIntent.getActivity(context, 0, nextActivity, PendingIntent.FLAG_MUTABLE);
+
 
             try {
                 pending.send();
