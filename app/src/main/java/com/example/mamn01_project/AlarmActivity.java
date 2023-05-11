@@ -24,6 +24,7 @@ import android.widget.Toast;
 import android.media.MediaPlayer;
 
 import com.example.mamn01_project.ui.exercises.Exercise;
+import com.example.mamn01_project.ui.exercises.ExerciseFragment;
 import com.example.mamn01_project.ui.exercises.SunSalutationExercise;
 import com.example.mamn01_project.ui.exercises.WalkStepsExercise;
 
@@ -70,6 +71,16 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
         showWhenLocked();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm);
+        if (savedInstanceState == null){
+            Bundle args = new Bundle();
+            args.putString("param1","test");
+            args.putString("param2","test2");
+            getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .add(R.id.alert_container, ExerciseFragment.class, args)
+                    .commit();
+        }
+        /*
         if (getIntent().hasExtra("enabledExerciseNames")) {
             List<String> enabledExerciseNames = getIntent().getStringArrayListExtra("enabledExerciseNames");
             if (enabledExerciseNames != null && !enabledExerciseNames.isEmpty()) {
@@ -82,7 +93,7 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
                 }
             }
         }
-
+*/
         if (enabledExercises != null && !enabledExercises.isEmpty()) {
             Random random = new Random();
             currentExercise = enabledExercises.get(random.nextInt(enabledExercises.size()));
@@ -96,15 +107,16 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
             Log.e("AlarmActivity", "Error creating media player");
         }
         //Till knappen när larmet går
-        Button yourButton = findViewById(R.id.start_button);
-        yourButton.setOnClickListener(new View.OnClickListener() {
+        /*
+        Button exercise_start = findViewById(R.id.start_button);
+        exercise_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Inte implementerat ännu
             }
         });
 
-
+        */
         Toast.makeText(this, "Alarm....", Toast.LENGTH_LONG).show();
         Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
@@ -115,7 +127,6 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
             //deprecated in API 26
             v.vibrate(500);
         }
-        Log.d("AlarmActivity", "onCreate");
 
     }
     /**
@@ -157,7 +168,6 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
  * */
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        Log.d("AlarmActivity", "onSensorChanged called");
         if (currentExercise != null && !currentExercise.isCompleted()) {
             /**
              * Den här koden är väldigt viktig. Istället för att implementera en sensorEventListener i

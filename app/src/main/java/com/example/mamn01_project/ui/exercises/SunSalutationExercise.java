@@ -34,10 +34,13 @@ public class SunSalutationExercise extends Exercise {
 
             if (!neutralPosition && zValue > -2 && zValue < 2) {
                 neutralPosition = true;
+                Log.d("Sun", "NEUTRAL");
             } else if (neutralPosition && !touchedToes && zValue > 9) {
                 touchedToes = true;
+                Log.d("Sun", "TOE");
             } else if (neutralPosition && touchedToes && zValue < -9) {
                 phoneOverHead = true;
+                Log.d("Sun", "HEAD");
             }
         }
     }
