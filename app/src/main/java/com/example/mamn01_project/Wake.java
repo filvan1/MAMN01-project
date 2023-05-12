@@ -15,6 +15,7 @@ import android.util.Log;
 
 import com.example.mamn01_project.ui.alarm.AlarmFragment;
 import com.example.mamn01_project.ui.exercises.Exercise;
+import com.example.mamn01_project.ui.exercises.ExerciseListEntry;
 import com.example.mamn01_project.ui.exercises.ExercisesViewModel;
 import com.example.mamn01_project.ui.exercises.WalkStepsExercise;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -83,10 +84,10 @@ public class Wake extends AppCompatActivity {
          * först den som den som äger aktiviteten(lifecycle owner) vilket är Wake(this) och en function som exekveras
          * om data förändras.
          * */
-        exercisesViewModel.getEnabledExercises().observe(this, enabledExercises -> {
+        exercisesViewModel.getExercises().observe(this, enabledExercises -> {
             // You can use the enabledExercises list here
             // For example, update your exercisePool variable based on the enabled exercises
-            for (Exercise exercise : enabledExercises) {
+            for (ExerciseListEntry exercise : enabledExercises) {
                 Log.d("EnabledExercises", exercise.getName() + ": " + (exercise.isEnabled() ? "Enabled" : "Disabled"));
             }
         });
@@ -111,15 +112,21 @@ public class Wake extends AppCompatActivity {
              * vi iväg detta med ett intent till AlarmActivity. (Läs kommentar i onCreate och createExerciseByName i
              * AlarmActivity där datan behandlas.)
              * */
-            List<Exercise> enabledExercises = exercisesViewModel.getEnabledExercises().getValue();
+            List<ExerciseListEntry> enabledExercises = exercisesViewModel.getExercises().getValue();
             if (enabledExercises != null) {
                 ArrayList<String> enabledExerciseNames = new ArrayList<>();
-                for (Exercise exercise : enabledExercises) {
+                for (ExerciseListEntry exercise : enabledExercises) {
 
+                    Log.d("AlarmActivity", exercise.getName()+" in list with status "+ exercise.isEnabled() );
+                    if(exercise.isEnabled()){
 
-                    enabledExerciseNames.add(exercise.getName());
+                        Log.d("AlarmActivity", exercise.getName()+" enabled" );
+                        enabledExerciseNames.add(exercise.getName());
+                    }
                 }
                 nextActivity.putStringArrayListExtra("enabledExerciseNames", enabledExerciseNames);
+
+                Log.d("AlarmActivity", "ADDED: " +enabledExerciseNames );
             }
 
             // Make sure that the alarm activity starts properly
@@ -129,8 +136,8 @@ public class Wake extends AppCompatActivity {
                             | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                             | Intent.FLAG_ACTIVITY_NEW_TASK
             );
-                PendingIntent pending = PendingIntent.getActivity(context, 0, nextActivity, PendingIntent.FLAG_MUTABLE);
-
+            PendingIntent pending;
+            pending = PendingIntent.getActivity(context, 0, nextActivity, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
             try {
                 pending.send();
