@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/navigation_exercises"
-        android:name="com.example.mamn01_project.ui.exercises.ExerciseListFragment"
+        android:name="com.example.mamn01_project.ui.exercises.ExercisesFragment"
         android:label="@string/title_exercises"
         tools:layout="@layout/fragment_exercises" />
 

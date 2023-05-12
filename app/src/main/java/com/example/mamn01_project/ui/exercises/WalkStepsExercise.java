@@ -74,5 +74,15 @@ public class WalkStepsExercise extends Exercise {
         }*/
 
     }
+
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+
+    }
 }
 

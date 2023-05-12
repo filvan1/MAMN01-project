@@ -1,11 +1,14 @@
 package com.example.mamn01_project.ui.exercises;
 
 import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Parcelable;
 
-public abstract class Exercise {
+public abstract class Exercise implements SensorEventListener {
     private String name;
     private boolean enabled;
+    private SensorManager sensorManager;
 
     public Exercise(String name) {
         this.name = name;
@@ -33,4 +36,9 @@ public abstract class Exercise {
     public abstract boolean isCompleted();
 
     public abstract void processSensorEvent(SensorEvent sensorEvent);
+
+    public abstract void Pause();
+
+    public abstract void Resume();
+
 }

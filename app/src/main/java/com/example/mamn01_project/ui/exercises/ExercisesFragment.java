@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -17,7 +18,7 @@ import com.example.mamn01_project.databinding.FragmentExercisesBinding;
 
 import java.util.ArrayList;
 
-public class ExerciseListFragment extends Fragment {
+public class ExercisesFragment extends Fragment {
 
     private FragmentExercisesBinding binding;
     private ExerciseAdapter adapter;

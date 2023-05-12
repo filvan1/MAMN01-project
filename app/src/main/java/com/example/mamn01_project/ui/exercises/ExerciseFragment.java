@@ -32,6 +32,8 @@ public class ExerciseFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String SUN_SALUTATION = "Solhälsning";
+    private static final String BEACH_WALK = "Beachwalk";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -130,10 +132,10 @@ public class ExerciseFragment extends Fragment {
      * Det var mycket svårare att skicka objekten direkt därför blev denna lösning lättare.
      */
     private Exercise createExerciseByName(String exerciseName) {
-        if (exerciseName.equals("Beachwalk")) {
-            return new WalkStepsExercise("Beachwalk");
-        } else if (exerciseName.equals("Solhälsning")) {
-            return new SunSalutationExercise("Solhälsning");
+        if (exerciseName.equals(BEACH_WALK)) {
+            return new WalkStepsExercise(BEACH_WALK);
+        } else if (exerciseName.equals(SUN_SALUTATION)) {
+            return new SunSalutationExercise(SUN_SALUTATION);
         }
 
         return null;
@@ -144,38 +146,40 @@ public class ExerciseFragment extends Fragment {
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(this, gyroscope, SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(this, stepCounter, SensorManager.SENSOR_DELAY_NORMAL);*/
+        exercise.Resume();
         Log.d("AlarmActivity", "onResume");
     }
 
     public void Pause(){
         //sensorManager.unregisterListener(this);
+        exercise.Pause();
     }
 
     /**
      * onSensorChanged kallas när någon sensor får ett förändrat värde, så väldigt ofta.
      * */
-    /*
-    @Override
+    /*@Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         if (exercise != null && !exercise.isCompleted()) {
 
              * Den här koden är väldigt viktig. Istället för att implementera en sensorEventListener i
-             * varje subklass av exercise så kan vi istället använda metoden processSensorEvent i varje subclass
-             * på detta vis kan vi gå in i currentExercise (som är vår utvalde exercise när larmet går) och ändra
+                    * varje subklass av exercise så kan vi istället använda metoden processSensorEvent i varje subclass
+                    * på detta vis kan vi gå in i currentExercise (som är vår utvalde exercise när larmet går) och ändra
              * på värden. Exemelvis så kan vi ändra på currentSteps när sensorn i denna klassen känner att vi tar
              * ett steg. Nedsidan är att vi måste implementera processSensorEvent i varje subklass men uppsidan är
-             * mycket större då vi slipper ha en SensorEventListener i varje subklass och en mycket mer avancerad
-             * programstruktur
-             *
-            exercise.processSensorEvent(sensorEvent);
+                    * mycket större då vi slipper ha en SensorEventListener i varje subklass och en mycket mer avancerad
+                    * programstruktur
+                    *
+                    exercise.processSensorEvent(sensorEvent);
             /**
              * Vi kollar hela tiden om currentExercise är färdig.
              *
-            if (exercise.isCompleted()) {
-                listener.onClick();
-            }
-        }
-    }*/
+             if (exercise.isCompleted()) {
+             listener.onClick();
+             }
+             }
+             }
+    */
 
 
 }

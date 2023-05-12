@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/alarm_background"
-    tools:context=".ui.exercises.ExerciseListFragment">
+    tools:context=".ui.exercises.ExercisesFragment">
 
 
     <androidx.recyclerview.widget.RecyclerView

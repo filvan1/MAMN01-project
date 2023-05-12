@@ -80,5 +80,15 @@ public class SunSalutationExercise extends Exercise {
     private void setCompleted(boolean setter) {
         completed = setter;
     }
+
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+
+    }
 }
 
