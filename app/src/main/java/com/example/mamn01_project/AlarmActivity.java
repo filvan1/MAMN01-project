@@ -1,6 +1,8 @@
 package com.example.mamn01_project;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.content.Context;
@@ -19,16 +21,16 @@ import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.Toast;
 import android.media.MediaPlayer;
 
 import com.example.mamn01_project.ui.exercises.Exercise;
+import com.example.mamn01_project.ui.exercises.ExerciseFragment;
 import com.example.mamn01_project.ui.exercises.SunSalutationExercise;
 import com.example.mamn01_project.ui.exercises.WalkStepsExercise;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -47,6 +49,10 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
     private boolean overHead = false;
     private boolean toesTouched = false;
     private boolean exerciseFinished = false;
+
+    private FragmentManager fragmentManager;
+    private FragmentTransaction currentTransaction;
+    private int[] ExerciseList;
 
     private Exercise currentExercise;
 
@@ -69,7 +75,22 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
         stepCounter = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         showWhenLocked();
         super.onCreate(savedInstanceState);
+
+        fragmentManager = getSupportFragmentManager();
+        currentTransaction = fragmentManager.beginTransaction();
         setContentView(R.layout.activity_alarm);
+        if (savedInstanceState == null){
+            ExerciseFragment frag = ExerciseFragment.newInstance(null, R.layout.fragment_alert);
+            frag.setOnEventListener(listener);
+            currentTransaction
+                    .setReorderingAllowed(true)
+                    .add(R.id.alert_container, frag)
+                    .commit();
+        }
+
+
+
+
         if (getIntent().hasExtra("enabledExerciseNames")) {
             List<String> enabledExerciseNames = getIntent().getStringArrayListExtra("enabledExerciseNames");
             if (enabledExerciseNames != null && !enabledExerciseNames.isEmpty()) {
@@ -83,11 +104,7 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
             }
         }
 
-        if (enabledExercises != null && !enabledExercises.isEmpty()) {
-            Random random = new Random();
-            currentExercise = enabledExercises.get(random.nextInt(enabledExercises.size()));
-            Log.d("AlarmActivity", "Current exercise: " + currentExercise.getName());
-        }
+
 
         mediaPlayer = MediaPlayer.create(this, R.raw.waveswav);
         if(mediaPlayer != null) {
@@ -96,15 +113,16 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
             Log.e("AlarmActivity", "Error creating media player");
         }
         //Till knappen när larmet går
-        Button yourButton = findViewById(R.id.start_button);
-        yourButton.setOnClickListener(new View.OnClickListener() {
+        /*
+        Button exercise_start = findViewById(R.id.start_button);
+        exercise_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Inte implementerat ännu
             }
         });
 
-
+        */
         Toast.makeText(this, "Alarm....", Toast.LENGTH_LONG).show();
         Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
@@ -115,9 +133,30 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
             //deprecated in API 26
             v.vibrate(500);
         }
-        Log.d("AlarmActivity", "onCreate");
 
     }
+
+    private FragmentEventListener listener = new FragmentEventListener(){
+        @Override
+        public void onClick(){
+            Log.d("AlarmActivity", "AAAAAAAAAA");
+            if (enabledExercises != null && !enabledExercises.isEmpty()) {
+                Random random = new Random();
+                currentExercise = enabledExercises.remove(random.nextInt(enabledExercises.size()));
+                Log.d("AlarmActivity", "Current exercise: " + currentExercise.getName());
+
+                fragmentManager = getSupportFragmentManager();
+                ExerciseFragment frag = ExerciseFragment.newInstance("currentExercise", R.layout.fragment_exercise);
+                frag.setOnEventListener(listener);
+                currentTransaction = fragmentManager.beginTransaction();
+                currentTransaction
+                        .setReorderingAllowed(true)
+                        .replace(R.id.alert_container, frag)
+                        .commit();
+            }
+        }
+    };
+
     /**
      * Skapar ett exercise object baserat på namnet(string). Exercise objektet retureras
      * om namnet finns annars returerar null. Denna metod behövs i oncreate när vi tar emot
@@ -133,7 +172,6 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
 
         return null;
     }
-
 
     /* Metoden ska se till att vi får visa saker trots att mobilen är låst*/
 
@@ -157,7 +195,6 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
  * */
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        Log.d("AlarmActivity", "onSensorChanged called");
         if (currentExercise != null && !currentExercise.isCompleted()) {
             /**
              * Den här koden är väldigt viktig. Istället för att implementera en sensorEventListener i
