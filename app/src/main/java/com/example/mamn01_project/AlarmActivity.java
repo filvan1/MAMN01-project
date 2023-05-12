@@ -26,6 +26,7 @@ import android.media.MediaPlayer;
 
 import com.example.mamn01_project.ui.exercises.Exercise;
 import com.example.mamn01_project.ui.exercises.ExerciseFragment;
+import com.example.mamn01_project.ui.exercises.ExerciseListEntry;
 import com.example.mamn01_project.ui.exercises.SunSalutationExercise;
 import com.example.mamn01_project.ui.exercises.WalkStepsExercise;
 
@@ -34,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class AlarmActivity extends AppCompatActivity implements SensorEventListener {
+public class AlarmActivity extends AppCompatActivity {
     private SensorManager sensorManager;
     private  Sensor accelerometer;
 
@@ -44,19 +45,13 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
     private MediaPlayer mediaPlayer;
 
 
-    /*Dessa variabler är temporära här för att testa solhälsning. Denna data ska komma från en
-    separat class för varje övning sen */
-    private boolean overHead = false;
-    private boolean toesTouched = false;
-    private boolean exerciseFinished = false;
 
     private FragmentManager fragmentManager;
     private FragmentTransaction currentTransaction;
-    private int[] ExerciseList;
 
-    private Exercise currentExercise;
-
-    private List<Exercise> enabledExercises;
+    private List<String> enabledExercises;
+    private String currentExercise;
+    private ExerciseFragment frag;
 
     /**
      * Metoden kallas när aktiviteten startas, då börjar den med att aktivera
@@ -75,12 +70,29 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
         stepCounter = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         showWhenLocked();
         super.onCreate(savedInstanceState);
-
+        /* Create a */
         fragmentManager = getSupportFragmentManager();
         currentTransaction = fragmentManager.beginTransaction();
+        /* Set empty fragment container as current view*/
         setContentView(R.layout.activity_alarm);
+
+        if (getIntent().hasExtra("enabledExerciseNames")) {
+            List<String> enabledExerciseNames = getIntent().getStringArrayListExtra("enabledExerciseNames");
+            Log.d("AlarmActivity", "RECEIVED: " +enabledExerciseNames );
+            if (enabledExerciseNames != null && !enabledExerciseNames.isEmpty()) {
+                enabledExercises = new ArrayList<>();
+                for (String exerciseName : enabledExerciseNames) {
+
+                    Log.d("AlarmActivity", "NEW EXERCISE"+ exerciseName);
+                    enabledExercises.add(exerciseName);
+
+                }
+            }
+        }
+
+        /* I don't know why this if statement is needed*/
         if (savedInstanceState == null){
-            ExerciseFragment frag = ExerciseFragment.newInstance(null, R.layout.fragment_alert);
+            frag = ExerciseFragment.newInstance(null, R.layout.fragment_alert);
             frag.setOnEventListener(listener);
             currentTransaction
                     .setReorderingAllowed(true)
@@ -91,18 +103,7 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
 
 
 
-        if (getIntent().hasExtra("enabledExerciseNames")) {
-            List<String> enabledExerciseNames = getIntent().getStringArrayListExtra("enabledExerciseNames");
-            if (enabledExerciseNames != null && !enabledExerciseNames.isEmpty()) {
-                enabledExercises = new ArrayList<>();
-                for (String exerciseName : enabledExerciseNames) {
-                    Exercise exercise = createExerciseByName(exerciseName);
-                    if (exercise != null) {
-                        enabledExercises.add(exercise);
-                    }
-                }
-            }
-        }
+
 
 
 
@@ -143,35 +144,22 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
             if (enabledExercises != null && !enabledExercises.isEmpty()) {
                 Random random = new Random();
                 currentExercise = enabledExercises.remove(random.nextInt(enabledExercises.size()));
-                Log.d("AlarmActivity", "Current exercise: " + currentExercise.getName());
+                Log.d("AlarmActivity", "Current exercise: " + currentExercise);
 
-                fragmentManager = getSupportFragmentManager();
-                ExerciseFragment frag = ExerciseFragment.newInstance("currentExercise", R.layout.fragment_exercise);
+                //fragmentManager = getSupportFragmentManager();
+                frag = ExerciseFragment.newInstance(currentExercise, R.layout.fragment_exercise);
                 frag.setOnEventListener(listener);
                 currentTransaction = fragmentManager.beginTransaction();
                 currentTransaction
                         .setReorderingAllowed(true)
                         .replace(R.id.alert_container, frag)
                         .commit();
+            } else {
+                finish();
             }
         }
     };
 
-    /**
-     * Skapar ett exercise object baserat på namnet(string). Exercise objektet retureras
-     * om namnet finns annars returerar null. Denna metod behövs i oncreate när vi tar emot
-     * listan från wake, då måste vi konvertera listan av enabled exercise namn till Exercise objekt.
-     * Det var mycket svårare att skicka objekten direkt därför blev denna lösning lättare.
-     */
-    private Exercise createExerciseByName(String exerciseName) {
-        if (exerciseName.equals("Beachwalk")) {
-            return new WalkStepsExercise("Beachwalk");
-        } else if (exerciseName.equals("Solhälsning")) {
-            return new SunSalutationExercise("Solhälsning");
-        }
-
-        return null;
-    }
 
     /* Metoden ska se till att vi får visa saker trots att mobilen är låst*/
 
@@ -190,58 +178,27 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
     * kommer i sin tur att kalla på stopAlarm metoden i AlarmFragment. stopAlarm metoden stoppar
     * alarmet och skickar tillbaka braodcast att alarmet är stoppat.  */
 
-/**
- * onSensorChanged kallas när någon sensor får ett förändrat värde, så väldigt ofta.
- * */
-    @Override
-    public void onSensorChanged(SensorEvent sensorEvent) {
-        if (currentExercise != null && !currentExercise.isCompleted()) {
-            /**
-             * Den här koden är väldigt viktig. Istället för att implementera en sensorEventListener i
-             * varje subklass av exercise så kan vi istället använda metoden processSensorEvent i varje subclass
-             * på detta vis kan vi gå in i currentExercise (som är vår utvalde exercise när larmet går) och ändra
-             * på värden. Exemelvis så kan vi ändra på currentSteps när sensorn i denna klassen känner att vi tar
-             * ett steg. Nedsidan är att vi måste implementera processSensorEvent i varje subklass men uppsidan är
-             * mycket större då vi slipper ha en SensorEventListener i varje subklass och en mycket mer avancerad
-             * programstruktur
-             * */
-            currentExercise.processSensorEvent(sensorEvent);
-            /**
-             * Vi kollar hela tiden om currentExercise är färdig.
-             * */
-            if (currentExercise.isCompleted()) {
-                // Stop the alarm
-                LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent("ALARM_STOP"));
-                mediaPlayer.stop();
-                getWindow().getDecorView().setBackgroundColor(Color.GREEN);
-            }
-        }
-    }
 
-
-
-
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int i) {
-
-    }
     /*Metoden ska återaktivera sensorn när vi har haft applikationen i bakgrunden ett tag eller liknande */
     @Override
     protected void onResume() {
         super.onResume();
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-        sensorManager.registerListener(this, gyroscope, SensorManager.SENSOR_DELAY_NORMAL);
-        sensorManager.registerListener(this, stepCounter, SensorManager.SENSOR_DELAY_NORMAL);
-        Log.d("AlarmActivity", "onResume");
+        frag.Resume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        sensorManager.unregisterListener(this);
+        frag.Pause();
         Log.d("AlarmActivity", "onPause");
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.finish();
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
