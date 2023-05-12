@@ -146,13 +146,13 @@ public class ExerciseFragment extends Fragment {
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(this, gyroscope, SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(this, stepCounter, SensorManager.SENSOR_DELAY_NORMAL);*/
-        exercise.Resume();
+        if(exercise != null) exercise.Resume();
         Log.d("AlarmActivity", "onResume");
     }
 
     public void Pause(){
         //sensorManager.unregisterListener(this);
-        exercise.Pause();
+        if(exercise != null) exercise.Pause();
     }
 
     /**

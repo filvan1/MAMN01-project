@@ -77,6 +77,16 @@ public class SunSalutationExercise extends Exercise {
         Log.d("SunSalutationExercise", "processorSensorEvent: reps" + reps);
     }
 
+    @Override
+    public void Pause() {
+
+    }
+
+    @Override
+    public void Resume() {
+
+    }
+
     private void setCompleted(boolean setter) {
         completed = setter;
     }

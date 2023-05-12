@@ -63,7 +63,6 @@ public class AlarmActivity extends AppCompatActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
@@ -183,13 +182,13 @@ public class AlarmActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        frag.Resume();
+        if(frag != null) frag.Resume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        frag.Pause();
+        if(frag != null) frag.Pause();
         Log.d("AlarmActivity", "onPause");
     }
 

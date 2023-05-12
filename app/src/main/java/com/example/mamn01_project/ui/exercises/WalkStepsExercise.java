@@ -76,6 +76,16 @@ public class WalkStepsExercise extends Exercise {
     }
 
     @Override
+    public void Pause() {
+
+    }
+
+    @Override
+    public void Resume() {
+
+    }
+
+    @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
 
     }

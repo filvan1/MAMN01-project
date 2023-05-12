@@ -136,8 +136,8 @@ public class Wake extends AppCompatActivity {
                             | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                             | Intent.FLAG_ACTIVITY_NEW_TASK
             );
-                PendingIntent pending = PendingIntent.getActivity(context, 0, nextActivity, PendingIntent.FLAG_MUTABLE);
-
+            PendingIntent pending;
+            pending = PendingIntent.getActivity(context, 0, nextActivity, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
             try {
                 pending.send();
