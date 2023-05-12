@@ -1,16 +1,10 @@
 package com.example.mamn01_project.ui.exercises;
 
-import android.content.Intent;
-import android.graphics.Color;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +30,7 @@ public class ExerciseFragment extends Fragment {
     private static final String BEACH_WALK = "Beachwalk";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
+    private String exerciseName;
     private int mParam2;
     private FragmentEventListener listener;
 
@@ -67,15 +61,15 @@ public class ExerciseFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
+     * @param exerciseName Parameter 1.
      * @param param2 Parameter 2.
      * @return A new instance of fragment ExerciseFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ExerciseFragment newInstance(String param1, int param2) {
+    public static ExerciseFragment newInstance(String exerciseName, int param2) {
         ExerciseFragment fragment = new ExerciseFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM1, exerciseName);
         args.putInt(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
@@ -85,7 +79,7 @@ public class ExerciseFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
+            exerciseName = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getInt(ARG_PARAM2);
         }
 
@@ -115,9 +109,23 @@ public class ExerciseFragment extends Fragment {
 
         });
 
-        if(mParam1 != null){
-            TextView field = view.findViewById(R.id.test);
-            field.setText(mParam1);
+        if(exerciseName != null){
+
+            // Set time
+            TextView currentTime = view.findViewById(R.id.current_time);
+            currentTime.setText("" + DateFormat.format("hh:mm", System.currentTimeMillis()));
+
+            switch(exerciseName) {
+                case "Solhälsning":
+                    exerciseName = "Sun Salutation";
+                    break;
+                case "Beachwalk":
+                    exerciseName = "Beach Walk";
+                    break;
+            }
+
+            TextView exerciseNameText = view.findViewById(R.id.exercise_name);
+            exerciseNameText.setText(exerciseName);
 
         }
 
