@@ -3,6 +3,7 @@ package com.example.mamn01_project.ui.exercises;
 import android.annotation.SuppressLint;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
+import android.hardware.SensorManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
