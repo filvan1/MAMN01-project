@@ -2,6 +2,7 @@ package com.example.mamn01_project;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,12 +11,18 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 
 import com.example.mamn01_project.ui.alarm.AlarmFragment;
+import com.example.mamn01_project.ui.exercises.Exercise;
+import com.example.mamn01_project.ui.exercises.ExerciseListEntry;
+import com.example.mamn01_project.ui.exercises.ExercisesViewModel;
+import com.example.mamn01_project.ui.exercises.WalkStepsExercise;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -25,10 +32,19 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.mamn01_project.databinding.ActivityWakeBinding;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+/**
+ * Wake är huvudaktiviteten i applikationen. Den sköter också navigationen mellan
+ * alarm och exercise fragmenten.
+ *
+ * */
 public class Wake extends AppCompatActivity {
 
     private ActivityWakeBinding binding;
     private BroadcastReceiver alarmStopReceiver;
+    private ExercisesViewModel exercisesViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +52,6 @@ public class Wake extends AppCompatActivity {
 
         binding = ActivityWakeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        createNotificationChannel();
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -55,34 +69,81 @@ public class Wake extends AppCompatActivity {
                     Uri.parse("package:" + getPackageName()));
 
         }
-        alarmStopReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_activity_wake);
-                Fragment fragment = navHostFragment.getChildFragmentManager().getFragments().get(0);
-                if (fragment instanceof AlarmFragment) {
-                    ((AlarmFragment) fragment).stopAlarm();
-                }
+
+        registerReceiver(receiver, new IntentFilter(getResources().getString(R.string.intent_alarm_trigger)));
+
+        /**
+         * Initialliserar en exerciseViewModel genom att skapa en instans av ExerciseViewModel.
+         * */
+        exercisesViewModel = new ViewModelProvider(this).get(ExercisesViewModel.class);
+        //model.getExercises();
+
+
+        /**
+         * Initialliserar en observer för att upptäcka förändringar i enabled exercises. Metoden tar två argument
+         * först den som den som äger aktiviteten(lifecycle owner) vilket är Wake(this) och en function som exekveras
+         * om data förändras.
+         * */
+        exercisesViewModel.getExercises().observe(this, enabledExercises -> {
+            // You can use the enabledExercises list here
+            // For example, update your exercisePool variable based on the enabled exercises
+            for (ExerciseListEntry exercise : enabledExercises) {
+                Log.d("EnabledExercises", exercise.getName() + ": " + (exercise.isEnabled() ? "Enabled" : "Disabled"));
             }
-        };
+        });
+
         //LocalBroadcastManager.getInstance(this).registerReceiver(alarmStopReceiver, new IntentFilter("ALARM_STOP"));
     }
 
-
-        private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "mamn01";
-            String desc = "Channel for Alarm Manager";
-            int imp = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel channel = new NotificationChannel("mamn01", name, imp);
-            channel.setDescription(desc);
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
     @Override
     protected void onDestroy() {
         super.onDestroy();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(alarmStopReceiver);
     }
+
+    BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Set up the separate alarm screen Activity
+            Intent nextActivity = new Intent(context, AlarmActivity.class);
+            /**
+             * Hämtar först en lista av enabled exercises med hjälp av vår viewmodel som vi etablerade oven i klassen.
+             * Om det finns enabled exercises så skapar vi en arraylist med namnen på alla exercises. Sedan skickar
+             * vi iväg detta med ett intent till AlarmActivity. (Läs kommentar i onCreate och createExerciseByName i
+             * AlarmActivity där datan behandlas.)
+             * */
+            List<ExerciseListEntry> enabledExercises = exercisesViewModel.getExercises().getValue();
+            if (enabledExercises != null) {
+                ArrayList<String> enabledExerciseNames = new ArrayList<>();
+                for (ExerciseListEntry exercise : enabledExercises) {
+
+                    Log.d("AlarmActivity", exercise.getName()+" in list with status "+ exercise.isEnabled() );
+                    if(exercise.isEnabled()){
+
+                        Log.d("AlarmActivity", exercise.getName()+" enabled" );
+                        enabledExerciseNames.add(exercise.getName());
+                    }
+                }
+                nextActivity.putStringArrayListExtra("enabledExerciseNames", enabledExerciseNames);
+
+                Log.d("AlarmActivity", "ADDED: " +enabledExerciseNames );
+            }
+
+            // Make sure that the alarm activity starts properly
+            nextActivity.setFlags(
+                    Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
+                            | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP
+                            | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                            | Intent.FLAG_ACTIVITY_NEW_TASK
+            );
+            PendingIntent pending;
+            pending = PendingIntent.getActivity(context, 0, nextActivity, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
+            try {
+                pending.send();
+            } catch (PendingIntent.CanceledException e) {
+                e.printStackTrace();
+            }
+        }
+    };
 }

@@ -9,20 +9,25 @@ import java.util.List;
 
 public class ExercisesViewModel extends ViewModel {
 
-    private MutableLiveData <List<Exercise>> exercises;
+    private MutableLiveData <List<ExerciseListEntry>> exercises;
 
     public ExercisesViewModel() {
         exercises = new MutableLiveData<>();
-        List<Exercise> startingExercises = new ArrayList<>();
-        startingExercises.add(new SunSalutationExercise("Solhälsning"));
-
-
+        List<ExerciseListEntry> startingExercises = new ArrayList<>();
+        startingExercises.add(new ExerciseListEntry("Solhälsning"));
+        startingExercises.add(new ExerciseListEntry("Beachwalk"));
 
         exercises.setValue(startingExercises);
+
+
     }
 
-    public LiveData<List<Exercise>> getExercises() {
+    public LiveData<List<ExerciseListEntry>> getExercises() {
         return exercises;
 
+    }
+
+    public void setExercises(List<ExerciseListEntry> list){
+        exercises.setValue(list);
     }
 }

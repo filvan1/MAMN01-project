@@ -1,6 +1,8 @@
 package com.example.mamn01_project;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.content.Context;
@@ -19,47 +21,83 @@ import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.Toast;
 import android.media.MediaPlayer;
 
 import com.example.mamn01_project.ui.exercises.Exercise;
+import com.example.mamn01_project.ui.exercises.ExerciseFragment;
+import com.example.mamn01_project.ui.exercises.ExerciseListEntry;
+import com.example.mamn01_project.ui.exercises.SunSalutationExercise;
 import com.example.mamn01_project.ui.exercises.WalkStepsExercise;
 
-import java.util.Arrays;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
-public class AlarmActivity extends AppCompatActivity implements SensorEventListener {
+public class AlarmActivity extends AppCompatActivity {
     private SensorManager sensorManager;
     private  Sensor accelerometer;
+
+    private Sensor gyroscope;
+
+    private Sensor stepCounter;
     private MediaPlayer mediaPlayer;
 
 
-    /*Dessa variabler är temporära här för att testa solhälsning. Denna data ska komma från en
-    separat class för varje övning sen */
-    private boolean overHead = false;
-    private boolean toesTouched = false;
-    private boolean exerciseFinished = false;
 
-    List<Exercise> exercisePool = Arrays.asList(
-            new WalkStepsExercise("beachWalk", 20)
-            // Lägg till fler exercises här
-    );
+    private FragmentManager fragmentManager;
+    private FragmentTransaction currentTransaction;
 
-/* Metoden kallas när aktiviteten startas. Kallar ShowWhenLocked() som gör att det kan visas även när
-* mobilen är låst. Vi aktiverar sensormanager som tar hand om sensorerna och aktiverar
-* accelerometern. Sätter även upp rätt layout när aktiviteten startas */
+    private List<String> enabledExercises;
+    private String currentExercise;
+    private ExerciseFragment frag;
+
+    /**
+     * Metoden kallas när aktiviteten startas, då börjar den med att aktivera
+     * sensormanager, accelerometer, gyro, step counter och media player. Den tar sedan emot alla enabled
+     * exercises från ett intent skickas från Wake när AlarmActivity startas.
+     * Intentet används helt enkelt för att skicka en lista av enabled exercises från
+     * Wake aktiviteten till AlarmActivity. Sedan går vi igenom den listan i nästa kodblock
+     * och väljer ut en av dem. Under det aktiverar vi ljudet när alarmet går.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        //Nya  när alarmet startar för exercises
-      //  Random random = new Random();
-      //  Exercise currentExercise = exercisePool.get(random.nextInt(exercisePool.size()));
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        stepCounter = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         showWhenLocked();
         super.onCreate(savedInstanceState);
+        /* Create a */
+        fragmentManager = getSupportFragmentManager();
+        currentTransaction = fragmentManager.beginTransaction();
+        /* Set empty fragment container as current view*/
         setContentView(R.layout.activity_alarm);
+
+        if (getIntent().hasExtra("enabledExerciseNames")) {
+            List<String> enabledExerciseNames = getIntent().getStringArrayListExtra("enabledExerciseNames");
+            Log.d("AlarmActivity", "RECEIVED: " +enabledExerciseNames );
+            if (enabledExerciseNames != null && !enabledExerciseNames.isEmpty()) {
+                enabledExercises = new ArrayList<>();
+                for (String exerciseName : enabledExerciseNames) {
+
+                    Log.d("AlarmActivity", "NEW EXERCISE"+ exerciseName);
+                    enabledExercises.add(exerciseName);
+
+                }
+            }
+        }
+
+        /* I don't know why this if statement is needed*/
+        if (savedInstanceState == null){
+            frag = ExerciseFragment.newInstance(null, R.layout.fragment_alert);
+            frag.setOnEventListener(listener);
+            currentTransaction
+                    .setReorderingAllowed(true)
+                    .add(R.id.alert_container, frag)
+                    .commit();
+        }
 
         mediaPlayer = MediaPlayer.create(this, R.raw.waveswav);
         if(mediaPlayer != null) {
@@ -68,15 +106,16 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
             Log.e("AlarmActivity", "Error creating media player");
         }
         //Till knappen när larmet går
-        Button yourButton = findViewById(R.id.start_button);
-        yourButton.setOnClickListener(new View.OnClickListener() {
+        /*
+        Button exercise_start = findViewById(R.id.start_button);
+        exercise_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Inte implementerat ännu
             }
         });
 
-
+        */
         Toast.makeText(this, "Alarm....", Toast.LENGTH_LONG).show();
         Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
@@ -87,9 +126,32 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
             //deprecated in API 26
             v.vibrate(500);
         }
-        Log.d("AlarmActivity", "onCreate");
 
     }
+
+    private FragmentEventListener listener = new FragmentEventListener(){
+        @Override
+        public void onClick(){
+            Log.d("AlarmActivity", "AAAAAAAAAA");
+            if (enabledExercises != null && !enabledExercises.isEmpty()) {
+                Random random = new Random();
+                currentExercise = enabledExercises.remove(random.nextInt(enabledExercises.size()));
+                Log.d("AlarmActivity", "Current exercise: " + currentExercise);
+
+                //fragmentManager = getSupportFragmentManager();
+                frag = ExerciseFragment.newInstance(currentExercise, R.layout.fragment_exercise);
+                frag.setOnEventListener(listener);
+                currentTransaction = fragmentManager.beginTransaction();
+                currentTransaction
+                        .setReorderingAllowed(true)
+                        .replace(R.id.alert_container, frag)
+                        .commit();
+            } else {
+                finish();
+            }
+        }
+    };
+
 
     /* Metoden ska se till att vi får visa saker trots att mobilen är låst*/
 
@@ -107,51 +169,28 @@ public class AlarmActivity extends AppCompatActivity implements SensorEventListe
     * i Wake har vi en braodcast reviecer som kan fånga upp detta och onRecieve metoden körs. Den
     * kommer i sin tur att kalla på stopAlarm metoden i AlarmFragment. stopAlarm metoden stoppar
     * alarmet och skickar tillbaka braodcast att alarmet är stoppat.  */
-    @Override
-    public void onSensorChanged(SensorEvent sensorEvent) {
-        if(!exerciseFinished){
-            float z = sensorEvent.values[2];
-            if(!overHead && z > 9) {
-                overHead = true;
-            }else if(overHead && z < -9) {
-                toesTouched = true;
-            }
-            if(overHead && toesTouched) {
-                LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent("ALARM_STOP"));
-                mediaPlayer.stop();
-                exerciseFinished = true;
-                getWindow().getDecorView().setBackgroundColor(Color.GREEN);
-            }
-            Log.d("AlarmActivity", "onSensorChanged: z=" + sensorEvent.values[2]);
-        }
-        /* Nya kollen
-        if (currentExercise.isCompleted()) {
-            // Stop the alarm
-        }
-        */
 
 
-        }
-
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int i) {
-
-    }
     /*Metoden ska återaktivera sensorn när vi har haft applikationen i bakgrunden ett tag eller liknande */
     @Override
     protected void onResume() {
         super.onResume();
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-        Log.d("AlarmActivity", "onResume");
+        if(frag != null) frag.Resume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        sensorManager.unregisterListener(this);
+        if(frag != null) frag.Pause();
         Log.d("AlarmActivity", "onPause");
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.finish();
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

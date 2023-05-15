@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MAMN01_project</string>
+    <string name="app_name">Wake</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="title_main">WAKE</string>
     <string name="title_sub">by New Wave Inc.</string>
@@ -24,4 +24,7 @@
     <string name="skip_alarm">Skip alarm</string>
     <string name="alarmtime">0:00</string>
     <string name="alarm">Your next alarm is set to</string>
+    <string name="intent_alarm_trigger">ALARM_TRIGGER</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

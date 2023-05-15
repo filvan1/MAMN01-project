@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -14,32 +15,37 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.MAMN01_project.Fullscreen"
-        tools:targetApi="31">>
-        <activity
-            android:name=".AlarmActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-
-        <receiver android:name=".ui.alarm.Receiver" />
-
+        tools:targetApi="31">
 
         <!-- Theme.MAMN01_project -->
         <activity
             android:name=".Wake"
             android:exported="true"
-            android:label="@string/title_activity_wake" >
+            android:label="@string/title_activity_wake"
+            >
+            <!--
+            android:taskAffinity=""
+             -->
+
+
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
 
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
+           <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+           </intent-filter>
+        </activity>
+        <activity
+            android:name=".AlarmActivity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            >
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
         </activity>
 
     </application>
