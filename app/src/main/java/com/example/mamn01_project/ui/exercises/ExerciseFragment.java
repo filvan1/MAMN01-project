@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.mamn01_project.FragmentEventListener;
 import com.example.mamn01_project.R;
 
@@ -123,10 +124,13 @@ public class ExerciseFragment extends Fragment {
                     break;
                 case "Beachwalk":
                     exerciseName = "Beach Walk";
+                    imageView.setImageResource(R.drawable.beach_walk);
+                    Glide.with(this).asGif().load(R.drawable.beach_walk).into(imageView);
                     break;
             }
 
             exerciseNameText.setText(exerciseName);
+            repsLeftText.setText("20"); // TODO fix
 
         }
 
