@@ -24,8 +24,8 @@ public class SunSalutationExercise extends Exercise {
 
 
 
-    public SunSalutationExercise(String name) {
-        super(name);
+    public SunSalutationExercise(String name, SensorManager manager) {
+        super(name, manager);
     }
 
     @Override
@@ -66,8 +66,8 @@ public class SunSalutationExercise extends Exercise {
         } else if (sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
             magnetic = sensorEvent.values;
         }
-        Log.d("SunSalutationExercise", "processorSensorEvent: reps" + reps);
         */
+        Log.d("SunSalutationExercise", "processorSensorEvent: reps" + reps);
         if (reps == FINAL_REPS) {
             setCompleted(true);
             Log.d("SunSalutationExercise.processSensorEvent()", "EXERCISE COMPLETED");

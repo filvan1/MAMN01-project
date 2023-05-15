@@ -99,13 +99,6 @@ public class AlarmActivity extends AppCompatActivity {
                     .commit();
         }
 
-
-
-
-
-
-
-
         mediaPlayer = MediaPlayer.create(this, R.raw.waveswav);
         if(mediaPlayer != null) {
             mediaPlayer.start();

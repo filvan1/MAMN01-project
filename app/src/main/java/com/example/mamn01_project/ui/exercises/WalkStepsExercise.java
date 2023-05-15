@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Parcel;
 import android.util.Log;
 
@@ -23,8 +24,8 @@ public class WalkStepsExercise extends Exercise {
     private boolean completed;
 
 
-    public WalkStepsExercise(String name) {
-        super(name);
+    public WalkStepsExercise(String name, SensorManager manager) {
+        super(name, manager);
         this.initialSteps = -1;
         this.currentSteps = 0;
         this.completed = false;

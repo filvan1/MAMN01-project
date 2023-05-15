@@ -1,5 +1,7 @@
 package com.example.mamn01_project.ui.exercises;
 
+import android.content.Context;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -33,7 +35,7 @@ public class ExerciseFragment extends Fragment {
     private String exerciseName;
     private int mParam2;
     private FragmentEventListener listener;
-
+    private SensorManager sensorManager;
     private Exercise exercise;
     /*Dessa variabler är temporära här för att testa solhälsning. Denna data ska komma från en
     separat class för varje övning sen
@@ -42,7 +44,7 @@ public class ExerciseFragment extends Fragment {
     private boolean exerciseFinished = false;
 
 
-    private SensorManager sensorManager;
+
     private Sensor accelerometer;
     private Sensor gyroscope;
     private Sensor stepCounter;
@@ -107,9 +109,12 @@ public class ExerciseFragment extends Fragment {
             TextView currentTime = view.findViewById(R.id.current_time);
             currentTime.setText("" + DateFormat.format("hh:mm", System.currentTimeMillis()));
 
+            sensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
+
             switch(exerciseName) {
                 case "Solhälsning":
                     exerciseName = "Sun Salutation";
+                    exercise = new SunSalutationExercise(exerciseName, sensorManager);
                     break;
                 case "Beachwalk":
                     exerciseName = "Beach Walk";
@@ -133,9 +138,9 @@ public class ExerciseFragment extends Fragment {
      */
     private Exercise createExerciseByName(String exerciseName) {
         if (exerciseName.equals(BEACH_WALK)) {
-            return new WalkStepsExercise(BEACH_WALK);
+            return new WalkStepsExercise(BEACH_WALK, sensorManager);
         } else if (exerciseName.equals(SUN_SALUTATION)) {
-            return new SunSalutationExercise(SUN_SALUTATION);
+            return new SunSalutationExercise(SUN_SALUTATION, sensorManager);
         }
 
         return null;
