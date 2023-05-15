@@ -118,6 +118,7 @@ public class ExerciseFragment extends Fragment {
                     break;
                 case "Beachwalk":
                     exerciseName = "Beach Walk";
+                    exercise = new WalkStepsExercise(exerciseName, sensorManager);
                     break;
             }
 

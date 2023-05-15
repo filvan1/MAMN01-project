@@ -3,6 +3,7 @@ package com.example.mamn01_project.ui.exercises;
 import android.annotation.SuppressLint;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
 
@@ -16,6 +17,8 @@ public class SunSalutationExercise extends Exercise {
     private float pitch;
     private float roll;
     private float[] inclineGravity = new float[3];
+    private Sensor accelerometer;
+    private Sensor magnetometer;
 
 
     private double reps;
@@ -26,6 +29,11 @@ public class SunSalutationExercise extends Exercise {
 
     public SunSalutationExercise(String name, SensorManager manager) {
         super(name, manager);
+        accelerometer = manager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+        magnetometer = manager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+
+        manager.registerListener((SensorEventListener) this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        manager.registerListener((SensorEventListener) this, magnetometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
@@ -41,8 +49,6 @@ public class SunSalutationExercise extends Exercise {
 
     @Override
     public void processSensorEvent(SensorEvent sensorEvent) {
-
-
         /*
         float[] rotationMatrix = new float[9];
         float[] inclinationMatrix = new float[9];
@@ -67,7 +73,7 @@ public class SunSalutationExercise extends Exercise {
             magnetic = sensorEvent.values;
         }
         */
-        Log.d("SunSalutationExercise", "processorSensorEvent: reps" + reps);
+        Log.d("SunSalutationExercise", "processorSensorEvent: reps " + reps + ". Sensor (10: acc, 2: mag): " + sensorEvent.sensor.getType());
         if (reps == FINAL_REPS) {
             setCompleted(true);
             Log.d("SunSalutationExercise.processSensorEvent()", "EXERCISE COMPLETED");
@@ -76,9 +82,11 @@ public class SunSalutationExercise extends Exercise {
         } else if (sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
             magnetic = sensorEvent.values;
             if (isTiltUpward()) {
+                //TODO vibration!
                 reps += 0.5;
                 Log.d("SunSalutationExercise.processSensorEvent()", "Tilt up. reps completed: " + reps);
             } else if (isTiltDownward()) {
+                //TODO vibration!
                 reps += 0.5;
                 Log.d("SunSalutationExercise.processSensorEvent()", "Tilt down. reps completed: " + reps);
             }
@@ -87,15 +95,15 @@ public class SunSalutationExercise extends Exercise {
     }
 
     private boolean isTiltUpward() {
-        if (acceleration != null && magnetic!= null)
-        {
+        if (acceleration != null && magnetic!= null) {
+            Log.d("isTiltUpward", "tild up: acceleration+magnetic");
             float R[] = new float[9];
             float I[] = new float[9];
 
             boolean success = SensorManager.getRotationMatrix(R, I, acceleration, magnetic);
 
-            if (success)
-            {
+            if (success) {
+                Log.d("isTiltUpward", "tilt up success");
                 float orientation[] = new float[3];
                 SensorManager.getOrientation(R, orientation);
 
@@ -163,15 +171,17 @@ public class SunSalutationExercise extends Exercise {
     }
 
     private boolean isTiltDownward() {
-        if (acceleration != null && magnetic != null)
-        {
+        if (acceleration != null && magnetic != null) {
+            Log.d("isTiltDownward", "tild down: acceleration+magnetic");
             float R[] = new float[9];
             float I[] = new float[9];
 
             boolean success = SensorManager.getRotationMatrix(R, I, acceleration, magnetic);
 
-            if (success)
-            {
+            if (success) {
+
+                Log.d("isTiltDownward", "tilt down success");
+
                 float orientation[] = new float[3];
                 SensorManager.getOrientation(R, orientation);
 
@@ -229,7 +239,7 @@ public class SunSalutationExercise extends Exercise {
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-
+        processSensorEvent(sensorEvent);
     }
 
     @Override
