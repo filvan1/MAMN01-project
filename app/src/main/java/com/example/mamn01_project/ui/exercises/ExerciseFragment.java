@@ -12,8 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.mamn01_project.FragmentEventListener;
 import com.example.mamn01_project.R;
 
@@ -36,6 +38,7 @@ public class ExerciseFragment extends Fragment {
     private int mParam2;
     private FragmentEventListener listener;
     private SensorManager sensorManager;
+
     private Exercise exercise;
     /*Dessa variabler är temporära här för att testa solhälsning. Denna data ska komma från en
     separat class för varje övning sen
@@ -44,7 +47,7 @@ public class ExerciseFragment extends Fragment {
     private boolean exerciseFinished = false;
 
 
-
+    private SensorManager sensorManager;
     private Sensor accelerometer;
     private Sensor gyroscope;
     private Sensor stepCounter;
@@ -111,18 +114,23 @@ public class ExerciseFragment extends Fragment {
 
             sensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
 
+            TextView exerciseNameText = view.findViewById(R.id.exercise_name);
+            TextView repsLeftText = view.findViewById(R.id.reps_left);
+            ImageView imageView = view.findViewById(R.id.image_view);
+
             switch(exerciseName) {
                 case "Solhälsning":
                     exerciseName = "Sun Salutation";
-                    exercise = new SunSalutationExercise(exerciseName, sensorManager);
                     break;
                 case "Beachwalk":
                     exerciseName = "Beach Walk";
+                    imageView.setImageResource(R.drawable.beach_walk);
+                    Glide.with(this).asGif().load(R.drawable.beach_walk).into(imageView);
                     break;
             }
 
-            TextView exerciseNameText = view.findViewById(R.id.exercise_name);
             exerciseNameText.setText(exerciseName);
+            repsLeftText.setText("20"); // TODO fix
 
         }
 
