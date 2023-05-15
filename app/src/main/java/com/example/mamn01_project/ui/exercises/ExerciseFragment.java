@@ -121,6 +121,8 @@ public class ExerciseFragment extends Fragment {
             switch(exerciseName) {
                 case "Solhälsning":
                     exerciseName = "Sun Salutation";
+                    imageView.setImageResource(R.drawable.sun_salutation);
+                    Glide.with(this).asGif().load(R.drawable.sun_salutation).into(imageView);
                     break;
                 case "Beachwalk":
                     exerciseName = "Beach Walk";

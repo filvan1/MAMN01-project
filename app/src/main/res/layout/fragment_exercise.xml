@@ -17,18 +17,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="7:30"
+            android:textColor="#FFFFFF"
             android:textSize="32sp"
-            app:layout_constraintStart_toStartOf="@+id/image_view"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/image_view"
             app:layout_constraintEnd_toEndOf="@+id/image_view"
-            app:layout_constraintBottom_toTopOf="@+id/image_view" />
+            app:layout_constraintStart_toStartOf="@+id/image_view" />
 
         <ImageView
             android:id="@+id/image_view"
             android:layout_width="300dp"
             android:layout_height="300dp"
-            android:layout_marginTop="100dp"
-            android:src="@drawable/ic_launcher_background"
+            android:layout_marginTop="80dp"
             android:foreground="@drawable/image_border"
+            android:src="@drawable/ic_launcher_background"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -39,7 +41,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Exercise name"
+            android:textColor="#FFFFFF"
             android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/image_view"
             app:layout_constraintTop_toBottomOf="@+id/image_view" />
 
@@ -49,16 +53,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Reps left"
+            android:textColor="#FFFFFFFF"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="@+id/image_view"
             app:layout_constraintTop_toBottomOf="@+id/image_view" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Test"
-            android:id="@+id/start_button"/>
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
