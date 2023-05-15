@@ -89,7 +89,7 @@ public class ExerciseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(mParam2, container, false);
-        /*if(mParam1 == null){
+        if(exerciseName == null){
             Button button = view.findViewById(R.id.start_button);
             button.setOnClickListener(v -> {
                 if(listener != null){
@@ -98,16 +98,8 @@ public class ExerciseFragment extends Fragment {
 
             });
         } else{
-            TextView field = view.findViewById(R.id.test);
-            field.setText(mParam1);
-        }*/
-        Button button = view.findViewById(R.id.start_button);
-        button.setOnClickListener(v -> {
-            if(listener != null){
-                listener.onClick();
-            }
+        }
 
-        });
 
         if(exerciseName != null){
 
