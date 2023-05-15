@@ -123,11 +123,13 @@ public class ExerciseFragment extends Fragment {
                     exerciseName = "Sun Salutation";
                     imageView.setImageResource(R.drawable.sun_salutation);
                     Glide.with(this).asGif().load(R.drawable.sun_salutation).into(imageView);
+                    exercise = new SunSalutationExercise(exerciseName, sensorManager);
                     break;
                 case "Beachwalk":
                     exerciseName = "Beach Walk";
                     imageView.setImageResource(R.drawable.beach_walk);
                     Glide.with(this).asGif().load(R.drawable.beach_walk).into(imageView);
+                    exercise = new WalkStepsExercise(exerciseName, sensorManager);
                     break;
             }
 
