@@ -1,14 +1,14 @@
 package com.example.mamn01_project.ui.exercises;
 
-import android.annotation.SuppressLint;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Parcel;
+import android.os.Vibrator;
 import android.util.Log;
+import android.widget.TextView;
 
-import androidx.annotation.NonNull;
+import com.example.mamn01_project.FragmentEventListener;
 
 
 public class WalkStepsExercise extends Exercise {
@@ -24,14 +24,19 @@ public class WalkStepsExercise extends Exercise {
     private boolean completed;
 
     private Sensor stepSensor;
+    private TextView repTextTarget;
+    private Vibrator vibrator;
 
 
-    public WalkStepsExercise(String name, SensorManager manager) {
-        super(name, manager);
+
+    public WalkStepsExercise(String name, SensorManager manager, TextView repText, FragmentEventListener listener, Vibrator vibrator) {
+        super(name, manager, listener);
         this.initialSteps = -1;
         this.currentSteps = 0;
         this.completed = false;
-        stepSensor = manager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        this.vibrator = vibrator;
+        this.repTextTarget = repText;
+        stepSensor = manager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
         manager.registerListener((SensorEventListener) this, stepSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
     public void updateSteps(int steps) {
@@ -47,7 +52,7 @@ public class WalkStepsExercise extends Exercise {
 
     @Override
     public int requiredSensorType() {
-        return Sensor.TYPE_STEP_COUNTER;
+        return Sensor.TYPE_STEP_DETECTOR;
     }
 
     @Override
@@ -60,14 +65,21 @@ public class WalkStepsExercise extends Exercise {
     @Override
     public void processSensorEvent(SensorEvent sensorEvent) {
         //Ser till så att det är rätt sensor som kommer in
-        Log.d("WalkStepExercise.processSensorEvent()","curentSteps " + currentSteps + ". Sensor type (19 e rätt): " + sensorEvent.sensor.getType());
+        Log.d("WalkStepExercise.processSensorEvent()","curentSteps " + currentSteps + ". Sensor type (18 e rätt): " + sensorEvent.sensor.getType());
 
-        if (sensorEvent.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
+        if (sensorEvent.sensor.getType() == Sensor.TYPE_STEP_DETECTOR) {
             if (initialSteps == -1) {
                 initialSteps = sensorEvent.values[0];
             }
-            currentSteps = (sensorEvent.values[0] - initialSteps);
-            Log.d("BeachWalk", "processSensorEvent: steps " + currentSteps);
+            currentSteps++;
+            repTextTarget.setText(""+(int)(TARGET_STEPS-currentSteps));
+            vibrator.vibrate(100);
+            Log.d("BeachWalk", "processSensorEvent: steps " + currentSteps + "  A "+ sensorEvent.values);
+            if(isCompleted()){
+                sensorManager.unregisterListener(this);
+                listener.onEvent();
+            }
+
             Log.d("BeachWalk", "Completed?: " + isCompleted());
         }
 
@@ -85,17 +97,16 @@ public class WalkStepsExercise extends Exercise {
 
     @Override
     public void Pause() {
-
+        sensorManager.unregisterListener(this);
     }
 
     @Override
     public void Resume() {
-
+        sensorManager.registerListener((SensorEventListener) this, stepSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        Log.d("sensor changed","AAAAA");
         processSensorEvent(sensorEvent);
     }
 

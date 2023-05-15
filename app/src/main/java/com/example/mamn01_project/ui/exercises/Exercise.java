@@ -6,14 +6,18 @@ import android.hardware.SensorManager;
 import android.os.Parcelable;
 import android.util.Log;
 
+import com.example.mamn01_project.FragmentEventListener;
+
 public abstract class Exercise implements SensorEventListener {
     private String name;
     private boolean enabled;
-    private SensorManager sensorManager;
+    protected SensorManager sensorManager;
+    protected FragmentEventListener listener;
 
-    public Exercise(String name, SensorManager manager) {
+    public Exercise(String name, SensorManager manager, FragmentEventListener listener) {
         this.name = name;
         this.enabled = false;
+        this.listener = listener;
         sensorManager = manager;
         Log.d("Exercise", "Start exercise: " + name);
     }

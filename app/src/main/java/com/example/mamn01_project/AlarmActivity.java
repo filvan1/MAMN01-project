@@ -131,7 +131,7 @@ public class AlarmActivity extends AppCompatActivity {
 
     private FragmentEventListener listener = new FragmentEventListener(){
         @Override
-        public void onClick(){
+        public void onEvent(){
             Log.d("AlarmActivity", "AAAAAAAAAA");
             if (enabledExercises != null && !enabledExercises.isEmpty()) {
                 Random random = new Random();

@@ -6,6 +6,8 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.os.Vibrator;
+import android.os.VibratorManager;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,6 +40,7 @@ public class ExerciseFragment extends Fragment {
     private int mParam2;
     private FragmentEventListener listener;
     private SensorManager sensorManager;
+    private Vibrator vibrator;
 
     private Exercise exercise;
     /*Dessa variabler är temporära här för att testa solhälsning. Denna data ska komma från en
@@ -98,7 +101,7 @@ public class ExerciseFragment extends Fragment {
             Button button = view.findViewById(R.id.start_button);
             button.setOnClickListener(v -> {
                 if(listener != null){
-                    listener.onClick();
+                    listener.onEvent();
                 }
 
             });
@@ -112,50 +115,42 @@ public class ExerciseFragment extends Fragment {
             TextView currentTime = view.findViewById(R.id.current_time);
             currentTime.setText("" + DateFormat.format("hh:mm", System.currentTimeMillis()));
 
-            sensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
+            Context context = getContext();
+
+            sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+
+            vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
             TextView exerciseNameText = view.findViewById(R.id.exercise_name);
             TextView repsLeftText = view.findViewById(R.id.reps_left);
             ImageView imageView = view.findViewById(R.id.image_view);
 
+            exerciseNameText.setText(exerciseName);
+
             switch(exerciseName) {
+
                 case "Solhälsning":
                     exerciseName = "Sun Salutation";
                     imageView.setImageResource(R.drawable.sun_salutation);
                     Glide.with(this).asGif().load(R.drawable.sun_salutation).into(imageView);
-                    exercise = new SunSalutationExercise(exerciseName, sensorManager, getContext());
+                    repsLeftText.setText("20");
+                    exercise = new SunSalutationExercise(exerciseName, sensorManager, repsLeftText, listener, vibrator);
                     break;
                 case "Beachwalk":
                     exerciseName = "Beach Walk";
                     imageView.setImageResource(R.drawable.beach_walk);
                     Glide.with(this).asGif().load(R.drawable.beach_walk).into(imageView);
-                    exercise = new WalkStepsExercise(exerciseName, sensorManager);
+                    repsLeftText.setText("20");
+                    exercise = new WalkStepsExercise(exerciseName, sensorManager, repsLeftText, listener, vibrator);
                     break;
             }
 
-            exerciseNameText.setText(exerciseName);
-            repsLeftText.setText("20"); // TODO fix
+
 
         }
 
                 // Inflate the layout for this fragment
         return view;
-    }
-
-    /**
-     * Skapar ett exercise object baserat på namnet(string). Exercise objektet retureras
-     * om namnet finns annars returerar null. Denna metod behövs i oncreate när vi tar emot
-     * listan från wake, då måste vi konvertera listan av enabled exercise namn till Exercise objekt.
-     * Det var mycket svårare att skicka objekten direkt därför blev denna lösning lättare.
-     */
-    private Exercise createExerciseByName(String exerciseName) {
-        if (exerciseName.equals(BEACH_WALK)) {
-            return new WalkStepsExercise(BEACH_WALK, sensorManager);
-        } else if (exerciseName.equals(SUN_SALUTATION)) {
-            return new SunSalutationExercise(SUN_SALUTATION, sensorManager, getContext());
-        }
-
-        return null;
     }
 
     public void Resume(){

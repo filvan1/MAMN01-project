@@ -8,8 +8,11 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Vibrator;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+
+import com.example.mamn01_project.FragmentEventListener;
 
 
 public class SunSalutationExercise extends Exercise {
@@ -27,7 +30,7 @@ public class SunSalutationExercise extends Exercise {
     private final double FINAL_REPS = 10;
     private boolean completed = false;
     private Vibrator vibrator;
-    private Context context;
+    private TextView repTextTarget;
 
     private enum Orientation {
         UP,
@@ -36,14 +39,13 @@ public class SunSalutationExercise extends Exercise {
     private Orientation lastRep;
 
 
-
-    public SunSalutationExercise(String name, SensorManager manager, Context context) {
-        super(name, manager);
+    public SunSalutationExercise(String name, SensorManager manager, TextView repText, FragmentEventListener listener, Vibrator vibrator) {
+        super(name, manager, listener);
         lastRep = Orientation.UP;
-        accelerometer = manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        this.vibrator = vibrator;
+        repTextTarget = repText;
+        accelerometer = manager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         magnetometer = manager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        this.context = context;
-        vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         manager.registerListener((SensorEventListener) this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         manager.registerListener((SensorEventListener) this, magnetometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
@@ -88,11 +90,13 @@ public class SunSalutationExercise extends Exercise {
         //Log.d("SunSalutationExercise", "processorSensorEvent: reps " + reps + ". Sensor (10: acc, 2: mag): " + sensorEvent.sensor.getType());
         if (reps == FINAL_REPS) {
             setCompleted(true);
+            sensorManager.unregisterListener(this);
+            listener.onEvent();
             Log.d("SunSalutationExercise.processSensorEvent()", "EXERCISE COMPLETED");
-        } else if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+        } else if (sensorEvent.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
             acceleration = sensorEvent.values;
-            //Log.d("Sensor type accelerometer","magnetometer values: " + magnetic);
-            //Log.d("Sensor type accelerometer","accelerometer values" + acceleration);
+            Log.d("Sensor type accelerometer","magnetometer values: " + magnetic);
+            Log.d("Sensor type accelerometer","accelerometer values" + acceleration);
 
         } else if (sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
 
@@ -104,13 +108,20 @@ public class SunSalutationExercise extends Exercise {
                 vibrator.vibrate(100);
                 reps += 0.5;
                 lastRep = Orientation.UP;
+                repTextTarget.setText(""+(FINAL_REPS-reps));
                 Log.d("SunSalutationExercise.processSensorEvent()", "Tilt up. reps completed: " + reps);
             } else if (isTiltDownward() && !isTiltUpward() && lastRep == Orientation.UP) {
                 //TODO vibration!
                 vibrator.vibrate(100);
                 reps += 0.5;
                 lastRep = Orientation.DOWN;
+                repTextTarget.setText(""+(FINAL_REPS-reps));
                 Log.d("SunSalutationExercise.processSensorEvent()", "Tilt down. reps completed: " + reps);
+            }
+
+            if(isCompleted()){
+                sensorManager.unregisterListener(this);
+                listener.onEvent();
             }
         }
 
@@ -246,12 +257,13 @@ public class SunSalutationExercise extends Exercise {
 
     @Override
     public void Pause() {
-
+        sensorManager.unregisterListener(this);
     }
 
     @Override
     public void Resume() {
-
+        sensorManager.registerListener((SensorEventListener) this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener((SensorEventListener) this, magnetometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     private void setCompleted(boolean setter) {
