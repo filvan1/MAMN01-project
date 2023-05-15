@@ -33,6 +33,8 @@ public class ExerciseFragment extends Fragment {
     private static final String SUN_SALUTATION = "Solhälsning";
     private static final String BEACH_WALK = "Beachwalk";
 
+    private static final String SUN_LIGHT = "Sunlight";
+
     // TODO: Rename and change types of parameters
     private String exerciseName;
     private int mParam2;
@@ -131,6 +133,11 @@ public class ExerciseFragment extends Fragment {
                     Glide.with(this).asGif().load(R.drawable.beach_walk).into(imageView);
                     exercise = new WalkStepsExercise(exerciseName, sensorManager);
                     break;
+                case "Sunlight":
+                    exerciseName = "Sunlight";
+                    /// TODO: 2023-05-15
+                    exercise = new LightExercise(exerciseName, sensorManager);
+                    break;
             }
 
             exerciseNameText.setText(exerciseName);
@@ -153,6 +160,8 @@ public class ExerciseFragment extends Fragment {
             return new WalkStepsExercise(BEACH_WALK, sensorManager);
         } else if (exerciseName.equals(SUN_SALUTATION)) {
             return new SunSalutationExercise(SUN_SALUTATION, sensorManager);
+        }else if (exerciseName.equals(SUN_LIGHT)) {
+            return new LightExercise(SUN_LIGHT, sensorManager);
         }
 
         return null;

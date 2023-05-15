@@ -16,6 +16,8 @@ public class ExercisesViewModel extends ViewModel {
         List<ExerciseListEntry> startingExercises = new ArrayList<>();
         startingExercises.add(new ExerciseListEntry("Solhälsning"));
         startingExercises.add(new ExerciseListEntry("Beachwalk"));
+        startingExercises.add(new ExerciseListEntry("Sunlight"));
+
 
         exercises.setValue(startingExercises);
 
