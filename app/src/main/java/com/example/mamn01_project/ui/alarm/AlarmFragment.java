@@ -65,6 +65,7 @@ public class AlarmFragment extends Fragment {
             Calendar cal = Calendar.getInstance();
             int currentHour = cal.get(Calendar.HOUR_OF_DAY);
             int currentMinute = cal.get(Calendar.MINUTE);
+            TextView alarmText = root.findViewById(R.id.text_home);
 
             TimePickerDialog pickerDialog = new TimePickerDialog(getActivity(), (timePicker, hours, minutes) ->{
                 Calendar cal = Calendar.getInstance();
@@ -83,6 +84,11 @@ public class AlarmFragment extends Fragment {
 
                 Toast.makeText(getActivity(), "Alarm set for " + hours + ":" + minutes + ".", Toast.LENGTH_LONG).show();
 
+                if (minutes >= 0 && minutes <= 9) {
+                    alarmText.setText(hours + ":0" + minutes);
+                } else {
+                    alarmText.setText(hours + ":" + minutes);
+                }
             }, currentHour, currentMinute, true);
 
 
