@@ -123,7 +123,7 @@ public class ExerciseFragment extends Fragment {
                     exerciseName = "Sun Salutation";
                     imageView.setImageResource(R.drawable.sun_salutation);
                     Glide.with(this).asGif().load(R.drawable.sun_salutation).into(imageView);
-                    exercise = new SunSalutationExercise(exerciseName, sensorManager);
+                    exercise = new SunSalutationExercise(exerciseName, sensorManager, getContext());
                     break;
                 case "Beachwalk":
                     exerciseName = "Beach Walk";
@@ -152,7 +152,7 @@ public class ExerciseFragment extends Fragment {
         if (exerciseName.equals(BEACH_WALK)) {
             return new WalkStepsExercise(BEACH_WALK, sensorManager);
         } else if (exerciseName.equals(SUN_SALUTATION)) {
-            return new SunSalutationExercise(SUN_SALUTATION, sensorManager);
+            return new SunSalutationExercise(SUN_SALUTATION, sensorManager, getContext());
         }
 
         return null;

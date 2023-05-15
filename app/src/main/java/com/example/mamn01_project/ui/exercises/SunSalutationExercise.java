@@ -1,10 +1,12 @@
 package com.example.mamn01_project.ui.exercises;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Vibrator;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -22,16 +24,26 @@ public class SunSalutationExercise extends Exercise {
 
 
     private double reps;
-    private final double FINAL_REPS = 5;
+    private final double FINAL_REPS = 10;
     private boolean completed = false;
+    private Vibrator vibrator;
+    private Context context;
+
+    private enum Orientation {
+        UP,
+        DOWN
+    }
+    private Orientation lastRep;
 
 
 
-    public SunSalutationExercise(String name, SensorManager manager) {
+    public SunSalutationExercise(String name, SensorManager manager, Context context) {
         super(name, manager);
-        accelerometer = manager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+        lastRep = Orientation.UP;
+        accelerometer = manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         magnetometer = manager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-
+        this.context = context;
+        vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         manager.registerListener((SensorEventListener) this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         manager.registerListener((SensorEventListener) this, magnetometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
@@ -73,21 +85,31 @@ public class SunSalutationExercise extends Exercise {
             magnetic = sensorEvent.values;
         }
         */
-        Log.d("SunSalutationExercise", "processorSensorEvent: reps " + reps + ". Sensor (10: acc, 2: mag): " + sensorEvent.sensor.getType());
+        //Log.d("SunSalutationExercise", "processorSensorEvent: reps " + reps + ". Sensor (10: acc, 2: mag): " + sensorEvent.sensor.getType());
         if (reps == FINAL_REPS) {
             setCompleted(true);
             Log.d("SunSalutationExercise.processSensorEvent()", "EXERCISE COMPLETED");
         } else if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             acceleration = sensorEvent.values;
+            //Log.d("Sensor type accelerometer","magnetometer values: " + magnetic);
+            //Log.d("Sensor type accelerometer","accelerometer values" + acceleration);
+
         } else if (sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+
             magnetic = sensorEvent.values;
-            if (isTiltUpward()) {
+            //Log.d("Sensor type magnetic", "magnetometer values: " +  magnetic);
+            //Log.d("Sensor type magnetic", "accelerometer values: " +  acceleration);
+            if (isTiltUpward() && !isTiltDownward() && lastRep == Orientation.DOWN ) {
                 //TODO vibration!
+                vibrator.vibrate(100);
                 reps += 0.5;
+                lastRep = Orientation.UP;
                 Log.d("SunSalutationExercise.processSensorEvent()", "Tilt up. reps completed: " + reps);
-            } else if (isTiltDownward()) {
+            } else if (isTiltDownward() && !isTiltUpward() && lastRep == Orientation.UP) {
                 //TODO vibration!
+                vibrator.vibrate(100);
                 reps += 0.5;
+                lastRep = Orientation.DOWN;
                 Log.d("SunSalutationExercise.processSensorEvent()", "Tilt down. reps completed: " + reps);
             }
         }
@@ -96,14 +118,14 @@ public class SunSalutationExercise extends Exercise {
 
     private boolean isTiltUpward() {
         if (acceleration != null && magnetic!= null) {
-            Log.d("isTiltUpward", "tild up: acceleration+magnetic");
+            //Log.d("isTiltUpward", "tiled up: acceleration+magnetic");
             float R[] = new float[9];
             float I[] = new float[9];
 
             boolean success = SensorManager.getRotationMatrix(R, I, acceleration, magnetic);
 
             if (success) {
-                Log.d("isTiltUpward", "tilt up success");
+                //Log.d("isTiltUpward", "tilt up success");
                 float orientation[] = new float[3];
                 SensorManager.getOrientation(R, orientation);
 
@@ -172,15 +194,14 @@ public class SunSalutationExercise extends Exercise {
 
     private boolean isTiltDownward() {
         if (acceleration != null && magnetic != null) {
-            Log.d("isTiltDownward", "tild down: acceleration+magnetic");
+            //Log.d("isTiltDownward", "tild down: acceleration+magnetic");
             float R[] = new float[9];
             float I[] = new float[9];
 
             boolean success = SensorManager.getRotationMatrix(R, I, acceleration, magnetic);
 
             if (success) {
-
-                Log.d("isTiltDownward", "tilt down success");
+                //Log.d("isTiltDownward", "tilt down success");
 
                 float orientation[] = new float[3];
                 SensorManager.getOrientation(R, orientation);
