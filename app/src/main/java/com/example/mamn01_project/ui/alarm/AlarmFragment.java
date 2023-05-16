@@ -71,9 +71,13 @@ public class AlarmFragment extends Fragment {
             TimePickerDialog pickerDialog = new TimePickerDialog(getActivity(), (timePicker, hours, minutes) ->{
                 Calendar cal = Calendar.getInstance();
                 // TODO: Make sure time picked is set to next date if required.
-                cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),cal.get(Calendar.DATE), hours, minutes, 0);
+                int targetDate = cal.get(Calendar.DATE);
+                if(hours < cal.get(hours)){
+                    targetDate++;
+                }
+                cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), targetDate, hours, minutes, 0);
 
-                long target= cal.getTimeInMillis();
+                long target = cal.getTimeInMillis();
 
                 // Set up
                 alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
@@ -85,11 +89,22 @@ public class AlarmFragment extends Fragment {
                 alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, target, pending);
 
                 if (minutes >= 0 && minutes <= 9) {
-                    alarmText.setText(hours + ":0" + minutes);
-                    Toast.makeText(getActivity(), "Alarm set for " + hours + ":0" + minutes + ".", Toast.LENGTH_LONG).show();
-                } else {
-                    alarmText.setText(hours + ":" + minutes);
-                    Toast.makeText(getActivity(), "Alarm set for " + hours + ":" + minutes + ".", Toast.LENGTH_LONG).show();
+                    if(hours >= 0 && hours <= 9){
+                        alarmText.setText("0"+hours + ":0" + minutes);
+                        Toast.makeText(getActivity(), "Alarm set for 0" + hours + ":0" + minutes + ".", Toast.LENGTH_LONG).show();
+                    } else{
+                        alarmText.setText(hours + ":0" + minutes);
+                        Toast.makeText(getActivity(), "Alarm set for " + hours + ":0" + minutes + ".", Toast.LENGTH_LONG).show();
+                    }
+                        } else {
+                    if(hours >= 0 && hours <= 9){
+                        alarmText.setText("0"+hours + ":" + minutes);
+                        Toast.makeText(getActivity(), "Alarm set for 0" + hours + ":" + minutes + ".", Toast.LENGTH_LONG).show();
+                    } else{
+                        alarmText.setText(hours + ":" + minutes);
+                        Toast.makeText(getActivity(), "Alarm set for " + hours + ":" + minutes + ".", Toast.LENGTH_LONG).show();
+
+                    }
                 }
             }, currentHour, currentMinute, true);
 
