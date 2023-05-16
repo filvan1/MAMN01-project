@@ -1,6 +1,7 @@
 package com.example.mamn01_project;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -22,6 +23,11 @@ import com.example.mamn01_project.ui.exercises.ExercisesViewModel;
 import com.example.mamn01_project.ui.exercises.WalkStepsExercise;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -68,10 +74,22 @@ public class Wake extends AppCompatActivity {
 
         if (!Settings.canDrawOverlays(this)){
             // Permission is not granted, ask the user to enable it
+
+            ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    new ActivityResultCallback<ActivityResult>() {
+                        @Override
+                        public void onActivityResult(ActivityResult result) {
+                            if (!Settings.canDrawOverlays(getApplicationContext())) {
+                                android.os.Process.killProcess(android.os.Process.myPid());
+                            }
+                        }
+                    });
             Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                     Uri.parse("package:" + getPackageName()));
-
+            someActivityResultLauncher.launch(intent);
         }
+
 
         if(ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_DENIED){
