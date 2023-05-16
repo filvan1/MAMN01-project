@@ -43,8 +43,9 @@ public class AlarmActivity extends AppCompatActivity {
 
     private Sensor stepCounter;
     private MediaPlayer mediaPlayer;
+    private boolean alarmOn = true;
 
-
+    private Vibrator v;
 
     private FragmentManager fragmentManager;
     private FragmentTransaction currentTransaction;
@@ -52,6 +53,7 @@ public class AlarmActivity extends AppCompatActivity {
     private List<String> enabledExercises;
     private String currentExercise;
     private ExerciseFragment frag;
+    private long[] pattern = {0, 100, 500, 100, 500, 100, 500, 100, 500, 100, 500};
 
     /**
      * Metoden kallas när aktiviteten startas, då börjar den med att aktivera
@@ -99,8 +101,9 @@ public class AlarmActivity extends AppCompatActivity {
                     .commit();
         }
 
-        mediaPlayer = MediaPlayer.create(this, R.raw.waveswav);
+        mediaPlayer = MediaPlayer.create(this, R.raw.alarm);
         if(mediaPlayer != null) {
+            mediaPlayer.setLooping(true);
             mediaPlayer.start();
         } else {
             Log.e("AlarmActivity", "Error creating media player");
@@ -117,14 +120,16 @@ public class AlarmActivity extends AppCompatActivity {
 
         */
         Toast.makeText(this, "Alarm....", Toast.LENGTH_LONG).show();
-        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
 
         // Vibrate for 500 milliseconds
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+
+            v.vibrate(VibrationEffect.createWaveform(pattern, 0));
         } else {
             //deprecated in API 26
-            v.vibrate(500);
+            v.vibrate(pattern, 0);
         }
 
     }
@@ -133,10 +138,20 @@ public class AlarmActivity extends AppCompatActivity {
         @Override
         public void onEvent(){
             Log.d("AlarmActivity", "AAAAAAAAAA");
+            v.cancel();
+            if(alarmOn) {
+                alarmOn = false;
+                mediaPlayer.stop();
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.waveswav);
+                mediaPlayer.setLooping(true);
+                mediaPlayer.start();
+
+            }
             if (enabledExercises != null && !enabledExercises.isEmpty()) {
                 Random random = new Random();
                 currentExercise = enabledExercises.remove(random.nextInt(enabledExercises.size()));
                 Log.d("AlarmActivity", "Current exercise: " + currentExercise);
+
 
                 //fragmentManager = getSupportFragmentManager();
                 frag = ExerciseFragment.newInstance(currentExercise, R.layout.fragment_exercise);
@@ -175,12 +190,22 @@ public class AlarmActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            v.vibrate(VibrationEffect.createWaveform(pattern, 0));
+        } else {
+            //deprecated in API 26
+            v.vibrate(pattern, 0);
+        }
+        mediaPlayer.start();
         if(frag != null) frag.Resume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        mediaPlayer.pause();
+        v.cancel();
         if(frag != null) frag.Pause();
         Log.d("AlarmActivity", "onPause");
     }
@@ -188,6 +213,8 @@ public class AlarmActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        v.cancel();
+        mediaPlayer.stop();
         this.finish();
     }
 

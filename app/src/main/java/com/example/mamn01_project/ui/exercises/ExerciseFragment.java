@@ -110,11 +110,6 @@ public class ExerciseFragment extends Fragment {
 
 
         if(exerciseName != null){
-
-            // Set time
-            TextView currentTime = view.findViewById(R.id.current_time);
-            currentTime.setText("" + DateFormat.format("hh:mm", System.currentTimeMillis()));
-
             Context context = getContext();
 
             sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
@@ -125,22 +120,18 @@ public class ExerciseFragment extends Fragment {
             TextView repsLeftText = view.findViewById(R.id.reps_left);
             ImageView imageView = view.findViewById(R.id.image_view);
 
-            exerciseNameText.setText(exerciseName);
+            exerciseNameText.setText(exerciseName.toUpperCase());
 
             switch(exerciseName) {
 
                 case "Solhälsning":
-                    exerciseName = "Sun Salutation";
                     imageView.setImageResource(R.drawable.sun_salutation);
                     Glide.with(this).asGif().load(R.drawable.sun_salutation).into(imageView);
-                    repsLeftText.setText("20");
                     exercise = new SunSalutationExercise(exerciseName, sensorManager, repsLeftText, listener, vibrator);
                     break;
                 case "Beachwalk":
-                    exerciseName = "Beach Walk";
                     imageView.setImageResource(R.drawable.beach_walk);
                     Glide.with(this).asGif().load(R.drawable.beach_walk).into(imageView);
-                    repsLeftText.setText("20");
                     exercise = new WalkStepsExercise(exerciseName, sensorManager, repsLeftText, listener, vibrator);
                     break;
             }

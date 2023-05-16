@@ -36,6 +36,7 @@ public class WalkStepsExercise extends Exercise {
         this.completed = false;
         this.vibrator = vibrator;
         this.repTextTarget = repText;
+        repTextTarget.setText(""+(int)TARGET_STEPS);
         stepSensor = manager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
         manager.registerListener((SensorEventListener) this, stepSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
