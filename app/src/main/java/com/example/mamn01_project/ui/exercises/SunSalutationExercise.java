@@ -85,6 +85,7 @@ public class SunSalutationExercise extends Exercise {
             }
             //om magnetometern uppdateras, spara värdet
         } else if (sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+
             magnetic = sensorEvent.values;
         }
         */

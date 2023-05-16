@@ -4,17 +4,22 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Vibrator;
 import android.util.Log;
+
+import com.example.mamn01_project.FragmentEventListener;
 
 public class LightExercise extends Exercise {
     private static final float LIGHT_THRESHOLD = 1250; // threshold in lux
     private boolean completed;
 
     private Sensor lightSensor;
+    private Vibrator vibrator;
 
-    public LightExercise(String name, SensorManager manager) {
-        super(name, manager);
+    public LightExercise(String name, SensorManager manager, FragmentEventListener listener, Vibrator vibrator) {
+        super(name, manager, listener);
         //this.completed = false;
+        this.vibrator = vibrator;
         lightSensor = manager.getDefaultSensor(Sensor.TYPE_LIGHT);
         manager.registerListener((SensorEventListener) this, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
 
@@ -38,19 +43,27 @@ public class LightExercise extends Exercise {
             Log.d("Light value", "processSensorEvent: " + sensorEvent.values[0]);
             if (sensorEvent.values[0] > LIGHT_THRESHOLD) {
                 completed = true;
+                vibrator.vibrate(100);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 Log.d("iscompleted?", "It is:" + isCompleted());
+                listener.onEvent();
+
             }
         }
     }
 
     @Override
     public void Pause() {
-
+        sensorManager.unregisterListener(this);
     }
 
     @Override
     public void Resume() {
-
+        sensorManager.registerListener((SensorEventListener) this, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override

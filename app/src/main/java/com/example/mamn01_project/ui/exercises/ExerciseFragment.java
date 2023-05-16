@@ -134,6 +134,10 @@ public class ExerciseFragment extends Fragment {
                     Glide.with(this).asGif().load(R.drawable.beach_walk).into(imageView);
                     exercise = new WalkStepsExercise(exerciseName, sensorManager, repsLeftText, listener, vibrator);
                     break;
+                case "Sunlight":
+                    exercise = new LightExercise(exerciseName, sensorManager, listener, vibrator);
+                    break;
+
             }
 
 
