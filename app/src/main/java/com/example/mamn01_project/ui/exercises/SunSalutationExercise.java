@@ -44,6 +44,7 @@ public class SunSalutationExercise extends Exercise {
         lastRep = Orientation.UP;
         this.vibrator = vibrator;
         repTextTarget = repText;
+        repTextTarget.setText(""+(int)FINAL_REPS);
         accelerometer = manager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         magnetometer = manager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         manager.registerListener((SensorEventListener) this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);

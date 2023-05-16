@@ -12,18 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/current_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="7:30"
-            android:textColor="#FFFFFF"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/image_view"
-            app:layout_constraintEnd_toEndOf="@+id/image_view"
-            app:layout_constraintStart_toStartOf="@+id/image_view" />
-
         <ImageView
             android:id="@+id/image_view"
             android:layout_width="300dp"
@@ -39,24 +27,39 @@
             android:id="@+id/exercise_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginBottom="20dp"
             android:text="Exercise name"
             android:textColor="#FFFFFF"
-            android:textSize="18sp"
+            android:textSize="24sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@+id/image_view"
-            app:layout_constraintTop_toBottomOf="@+id/image_view" />
+            app:layout_constraintBottom_toTopOf="@+id/image_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/reps_left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Reps left"
+            android:text="0"
             android:textColor="#FFFFFFFF"
-            android:textSize="18sp"
-            app:layout_constraintEnd_toEndOf="@+id/image_view"
+            android:textSize="128sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/image_view" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="REPS LEFT"
+            android:textAlignment="center"
+            android:textColor="#FFFFFFFF"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@+id/reps_left"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
