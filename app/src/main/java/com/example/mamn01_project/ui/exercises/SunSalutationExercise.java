@@ -27,7 +27,7 @@ public class SunSalutationExercise extends Exercise {
 
 
     private double reps;
-    private final double FINAL_REPS = 10;
+    private final double FINAL_REPS = 5;
     private boolean completed = false;
     private Vibrator vibrator;
     private TextView repTextTarget;
@@ -45,7 +45,7 @@ public class SunSalutationExercise extends Exercise {
         this.vibrator = vibrator;
         repTextTarget = repText;
         repTextTarget.setText(""+(int)FINAL_REPS);
-        accelerometer = manager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+        accelerometer = manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER); //LINEAR ACCELERATION
         magnetometer = manager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         manager.registerListener((SensorEventListener) this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         manager.registerListener((SensorEventListener) this, magnetometer, SensorManager.SENSOR_DELAY_NORMAL);
@@ -64,6 +64,8 @@ public class SunSalutationExercise extends Exercise {
 
     @Override
     public void processSensorEvent(SensorEvent sensorEvent) {
+
+        //V1: orienteringsbaserad, inte bara acceleration uppåt--------------------------------
         /*
         float[] rotationMatrix = new float[9];
         float[] inclinationMatrix = new float[9];
@@ -89,34 +91,35 @@ public class SunSalutationExercise extends Exercise {
             magnetic = sensorEvent.values;
         }
         */
+
+
+        //V2: orientering igen, funkar faktiskt, men fett finicky----------------------------
         //Log.d("SunSalutationExercise", "processorSensorEvent: reps " + reps + ". Sensor (10: acc, 2: mag): " + sensorEvent.sensor.getType());
         if (reps == FINAL_REPS) {
             setCompleted(true);
             sensorManager.unregisterListener(this);
             listener.onEvent();
             Log.d("SunSalutationExercise.processSensorEvent()", "EXERCISE COMPLETED");
-        } else if (sensorEvent.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
+        } else if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) { //LINEAR_ACCELERATION
             acceleration = sensorEvent.values;
-            Log.d("Sensor type accelerometer","magnetometer values: " + magnetic);
-            Log.d("Sensor type accelerometer","accelerometer values" + acceleration);
+            //Log.d("Sensor type accelerometer","magnetometer values: " + magnetic);
+            //Log.d("Sensor type accelerometer","accelerometer values" + acceleration);
 
         } else if (sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
 
             magnetic = sensorEvent.values;
             //Log.d("Sensor type magnetic", "magnetometer values: " +  magnetic);
             //Log.d("Sensor type magnetic", "accelerometer values: " +  acceleration);
-            if (isTiltUpward() && !isTiltDownward() && lastRep == Orientation.DOWN ) {
-                //TODO vibration!
-                vibrator.vibrate(100);
-                reps += 0.5;
-                lastRep = Orientation.UP;
-                repTextTarget.setText(""+(FINAL_REPS-reps));
-                Log.d("SunSalutationExercise.processSensorEvent()", "Tilt up. reps completed: " + reps);
-            } else if (isTiltDownward() && !isTiltUpward() && lastRep == Orientation.UP) {
-                //TODO vibration!
+            if (isDown() && !isUp() && lastRep == Orientation.UP) {
                 vibrator.vibrate(100);
                 reps += 0.5;
                 lastRep = Orientation.DOWN;
+                repTextTarget.setText(""+(FINAL_REPS-reps));
+                Log.d("SunSalutationExercise.processSensorEvent()", "Tilt up. reps completed: " + reps);
+            } else if (isUp() && !isDown() && lastRep == Orientation.DOWN) {
+                vibrator.vibrate(100);
+                reps += 0.5;
+                lastRep = Orientation.UP;
                 repTextTarget.setText(""+(FINAL_REPS-reps));
                 Log.d("SunSalutationExercise.processSensorEvent()", "Tilt down. reps completed: " + reps);
             }
@@ -129,7 +132,7 @@ public class SunSalutationExercise extends Exercise {
 
     }
 
-    private boolean isTiltUpward() {
+    private boolean isDown() { //(tiltUpward)
         if (acceleration != null && magnetic!= null) {
             //Log.d("isTiltUpward", "tiled up: acceleration+magnetic");
             float R[] = new float[9];
@@ -192,7 +195,7 @@ public class SunSalutationExercise extends Exercise {
                 int objPitchZeroPointTwoResult = objZeroPointTwo.compareTo(objPitch);
                 int objPitchZeroPointTwoNegativeResult = objPitch.compareTo(objZeroPointTwoNegative);
 
-                if (roll < 0 && ((objPitchZeroResult > 0 && objPitchZeroPointTwoResult > 0) || (objPitchZeroResult < 0 && objPitchZeroPointTwoNegativeResult > 0)) && (inclination > 30 && inclination < 40))
+                if (roll < 0 && ((objPitchZeroResult > 0 && objPitchZeroPointTwoResult > 0) || (objPitchZeroResult < 0 && objPitchZeroPointTwoNegativeResult > 0)) && (inclination > 0 && inclination < 30))
                 {
                     return true;
                 }
@@ -205,16 +208,14 @@ public class SunSalutationExercise extends Exercise {
         return false;
     }
 
-    private boolean isTiltDownward() {
+    private boolean isUp() {
         if (acceleration != null && magnetic != null) {
-            //Log.d("isTiltDownward", "tild down: acceleration+magnetic");
             float R[] = new float[9];
             float I[] = new float[9];
 
             boolean success = SensorManager.getRotationMatrix(R, I, acceleration, magnetic);
 
             if (success) {
-                //Log.d("isTiltDownward", "tilt down success");
 
                 float orientation[] = new float[3];
                 SensorManager.getOrientation(R, orientation);
@@ -231,7 +232,7 @@ public class SunSalutationExercise extends Exercise {
                 inclineGravity[1] = (float) (inclineGravity[1] / norm_Of_g);
                 inclineGravity[2] = (float) (inclineGravity[2] / norm_Of_g);
 
-                //Checks if device is flat on groud or not
+                //Checks if device is flat on ground or not
                 int inclination = (int) Math.round(Math.toDegrees(Math.acos(inclineGravity[2])));
 
                 Float objPitch = new Float(pitch);
@@ -243,7 +244,7 @@ public class SunSalutationExercise extends Exercise {
                 int objPitchZeroPointTwoResult = objZeroPointTwo.compareTo(objPitch);
                 int objPitchZeroPointTwoNegativeResult = objPitch.compareTo(objZeroPointTwoNegative);
 
-                if (roll < 0 && ((objPitchZeroResult > 0 && objPitchZeroPointTwoResult > 0) || (objPitchZeroResult < 0 && objPitchZeroPointTwoNegativeResult > 0)) && (inclination > 140 && inclination < 170))
+                if (roll < 0 && ((objPitchZeroResult > 0 && objPitchZeroPointTwoResult > 0) || (objPitchZeroResult < 0 && objPitchZeroPointTwoNegativeResult > 0)) && (inclination > 170 && inclination < 180))
                 {
                     return true;
                 }

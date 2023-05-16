@@ -13,7 +13,7 @@ import com.example.mamn01_project.FragmentEventListener;
 
 public class WalkStepsExercise extends Exercise {
 
-    private final float TARGET_STEPS = 20;
+    private final float TARGET_STEPS = 10;
 
     /**Tydligen kommer stegräknaren att ge antalet steg sedan telefonen startades om så vi behöver
      * denna variabeln */
