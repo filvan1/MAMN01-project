@@ -1,13 +1,18 @@
 package com.example.mamn01_project.ui.exercises;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Vibrator;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+
+import com.example.mamn01_project.FragmentEventListener;
 
 
 public class SunSalutationExercise extends Exercise {
@@ -22,16 +27,25 @@ public class SunSalutationExercise extends Exercise {
 
 
     private double reps;
-    private final double FINAL_REPS = 5;
+    private final double FINAL_REPS = 10;
     private boolean completed = false;
+    private Vibrator vibrator;
+    private TextView repTextTarget;
+
+    private enum Orientation {
+        UP,
+        DOWN
+    }
+    private Orientation lastRep;
 
 
-
-    public SunSalutationExercise(String name, SensorManager manager) {
-        super(name, manager);
+    public SunSalutationExercise(String name, SensorManager manager, TextView repText, FragmentEventListener listener, Vibrator vibrator) {
+        super(name, manager, listener);
+        lastRep = Orientation.UP;
+        this.vibrator = vibrator;
+        repTextTarget = repText;
         accelerometer = manager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         magnetometer = manager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-
         manager.registerListener((SensorEventListener) this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         manager.registerListener((SensorEventListener) this, magnetometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
@@ -73,22 +87,41 @@ public class SunSalutationExercise extends Exercise {
             magnetic = sensorEvent.values;
         }
         */
-        Log.d("SunSalutationExercise", "processorSensorEvent: reps " + reps + ". Sensor (10: acc, 2: mag): " + sensorEvent.sensor.getType());
+        //Log.d("SunSalutationExercise", "processorSensorEvent: reps " + reps + ". Sensor (10: acc, 2: mag): " + sensorEvent.sensor.getType());
         if (reps == FINAL_REPS) {
             setCompleted(true);
+            sensorManager.unregisterListener(this);
+            listener.onEvent();
             Log.d("SunSalutationExercise.processSensorEvent()", "EXERCISE COMPLETED");
-        } else if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+        } else if (sensorEvent.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
             acceleration = sensorEvent.values;
+            Log.d("Sensor type accelerometer","magnetometer values: " + magnetic);
+            Log.d("Sensor type accelerometer","accelerometer values" + acceleration);
+
         } else if (sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+
             magnetic = sensorEvent.values;
-            if (isTiltUpward()) {
+            //Log.d("Sensor type magnetic", "magnetometer values: " +  magnetic);
+            //Log.d("Sensor type magnetic", "accelerometer values: " +  acceleration);
+            if (isTiltUpward() && !isTiltDownward() && lastRep == Orientation.DOWN ) {
                 //TODO vibration!
+                vibrator.vibrate(100);
                 reps += 0.5;
+                lastRep = Orientation.UP;
+                repTextTarget.setText(""+(FINAL_REPS-reps));
                 Log.d("SunSalutationExercise.processSensorEvent()", "Tilt up. reps completed: " + reps);
-            } else if (isTiltDownward()) {
+            } else if (isTiltDownward() && !isTiltUpward() && lastRep == Orientation.UP) {
                 //TODO vibration!
+                vibrator.vibrate(100);
                 reps += 0.5;
+                lastRep = Orientation.DOWN;
+                repTextTarget.setText(""+(FINAL_REPS-reps));
                 Log.d("SunSalutationExercise.processSensorEvent()", "Tilt down. reps completed: " + reps);
+            }
+
+            if(isCompleted()){
+                sensorManager.unregisterListener(this);
+                listener.onEvent();
             }
         }
 
@@ -96,14 +129,14 @@ public class SunSalutationExercise extends Exercise {
 
     private boolean isTiltUpward() {
         if (acceleration != null && magnetic!= null) {
-            Log.d("isTiltUpward", "tild up: acceleration+magnetic");
+            //Log.d("isTiltUpward", "tiled up: acceleration+magnetic");
             float R[] = new float[9];
             float I[] = new float[9];
 
             boolean success = SensorManager.getRotationMatrix(R, I, acceleration, magnetic);
 
             if (success) {
-                Log.d("isTiltUpward", "tilt up success");
+                //Log.d("isTiltUpward", "tilt up success");
                 float orientation[] = new float[3];
                 SensorManager.getOrientation(R, orientation);
 
@@ -172,15 +205,14 @@ public class SunSalutationExercise extends Exercise {
 
     private boolean isTiltDownward() {
         if (acceleration != null && magnetic != null) {
-            Log.d("isTiltDownward", "tild down: acceleration+magnetic");
+            //Log.d("isTiltDownward", "tild down: acceleration+magnetic");
             float R[] = new float[9];
             float I[] = new float[9];
 
             boolean success = SensorManager.getRotationMatrix(R, I, acceleration, magnetic);
 
             if (success) {
-
-                Log.d("isTiltDownward", "tilt down success");
+                //Log.d("isTiltDownward", "tilt down success");
 
                 float orientation[] = new float[3];
                 SensorManager.getOrientation(R, orientation);
@@ -225,12 +257,13 @@ public class SunSalutationExercise extends Exercise {
 
     @Override
     public void Pause() {
-
+        sensorManager.unregisterListener(this);
     }
 
     @Override
     public void Resume() {
-
+        sensorManager.registerListener((SensorEventListener) this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener((SensorEventListener) this, magnetometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     private void setCompleted(boolean setter) {

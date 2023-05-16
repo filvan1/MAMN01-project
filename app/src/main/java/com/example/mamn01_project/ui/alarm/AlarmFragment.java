@@ -84,12 +84,12 @@ public class AlarmFragment extends Fragment {
 
                 alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, target, pending);
 
-                Toast.makeText(getActivity(), "Alarm set for " + hours + ":" + minutes + ".", Toast.LENGTH_LONG).show();
-
                 if (minutes >= 0 && minutes <= 9) {
                     alarmText.setText(hours + ":0" + minutes);
+                    Toast.makeText(getActivity(), "Alarm set for " + hours + ":0" + minutes + ".", Toast.LENGTH_LONG).show();
                 } else {
                     alarmText.setText(hours + ":" + minutes);
+                    Toast.makeText(getActivity(), "Alarm set for " + hours + ":" + minutes + ".", Toast.LENGTH_LONG).show();
                 }
             }, currentHour, currentMinute, true);
 
