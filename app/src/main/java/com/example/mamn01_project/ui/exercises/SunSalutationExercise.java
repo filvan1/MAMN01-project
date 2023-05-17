@@ -45,7 +45,8 @@ public class SunSalutationExercise extends Exercise {
         this.vibrator = vibrator;
         repTextTarget = repText;
         repTextTarget.setText(""+(int)FINAL_REPS);
-        accelerometer = manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER); //LINEAR ACCELERATION
+        accelerometer = manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        //accelerometer = manager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         magnetometer = manager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         manager.registerListener((SensorEventListener) this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         manager.registerListener((SensorEventListener) this, magnetometer, SensorManager.SENSOR_DELAY_NORMAL);
@@ -100,7 +101,7 @@ public class SunSalutationExercise extends Exercise {
             sensorManager.unregisterListener(this);
             listener.onEvent();
             Log.d("SunSalutationExercise.processSensorEvent()", "EXERCISE COMPLETED");
-        } else if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) { //LINEAR_ACCELERATION
+        } else if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             acceleration = sensorEvent.values;
             //Log.d("Sensor type accelerometer","magnetometer values: " + magnetic);
             //Log.d("Sensor type accelerometer","accelerometer values" + acceleration);
@@ -195,7 +196,7 @@ public class SunSalutationExercise extends Exercise {
                 int objPitchZeroPointTwoResult = objZeroPointTwo.compareTo(objPitch);
                 int objPitchZeroPointTwoNegativeResult = objPitch.compareTo(objZeroPointTwoNegative);
 
-                if (roll < 0 && ((objPitchZeroResult > 0 && objPitchZeroPointTwoResult > 0) || (objPitchZeroResult < 0 && objPitchZeroPointTwoNegativeResult > 0)) && (inclination > 0 && inclination < 30))
+                if (roll < 0 && ((objPitchZeroResult > 0 && objPitchZeroPointTwoResult > 0) || (objPitchZeroResult < 0 && objPitchZeroPointTwoNegativeResult > 0)) && (inclination > 0 && inclination < 40))
                 {
                     return true;
                 }
@@ -244,7 +245,7 @@ public class SunSalutationExercise extends Exercise {
                 int objPitchZeroPointTwoResult = objZeroPointTwo.compareTo(objPitch);
                 int objPitchZeroPointTwoNegativeResult = objPitch.compareTo(objZeroPointTwoNegative);
 
-                if (roll < 0 && ((objPitchZeroResult > 0 && objPitchZeroPointTwoResult > 0) || (objPitchZeroResult < 0 && objPitchZeroPointTwoNegativeResult > 0)) && (inclination > 170 && inclination < 180))
+                if (roll < 0 && ((objPitchZeroResult > 0 && objPitchZeroPointTwoResult > 0) || (objPitchZeroResult < 0 && objPitchZeroPointTwoNegativeResult > 0)) && (inclination > 160 && inclination < 180))
                 {
                     return true;
                 }

@@ -74,7 +74,7 @@ public class AlarmFragment extends Fragment {
                 int targetDate = cal.get(Calendar.DATE);
                 /*if(hours < cal.get(hours)){
                     targetDate++;
-                }*/
+                }*/ //kraschar när klockan är 23:något
                 cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), targetDate, hours, minutes, 0);
 
                 long target = cal.getTimeInMillis();

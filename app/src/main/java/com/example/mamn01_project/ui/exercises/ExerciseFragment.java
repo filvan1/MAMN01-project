@@ -157,6 +157,8 @@ public class ExerciseFragment extends Fragment {
                     exercise = new WalkStepsExercise(exerciseName, sensorManager, repsLeftText, listener, vibrator);
                     break;
                 case "Sunlight":
+                    imageView.setImageResource(R.drawable.sunlight);
+                    Glide.with(this).asGif().load(R.drawable.sunlight).into(imageView);
 
                     if(isRotated) {
                         repsLeftText.setRotation(-90);
