@@ -27,7 +27,7 @@ public class SunSalutationExercise extends Exercise {
 
 
     private double reps;
-    private final double FINAL_REPS = 5;
+    private final int FINAL_REPS = 12;
     private boolean completed = false;
     private Vibrator vibrator;
     private TextView repTextTarget;
@@ -112,15 +112,15 @@ public class SunSalutationExercise extends Exercise {
             //Log.d("Sensor type magnetic", "accelerometer values: " +  acceleration);
             if (isDown() && !isUp() && lastRep == Orientation.UP) {
                 vibrator.vibrate(100);
-                reps += 0.5;
+                reps += 1;
                 lastRep = Orientation.DOWN;
-                repTextTarget.setText(""+(FINAL_REPS-reps));
+                repTextTarget.setText(""+(int)(FINAL_REPS-reps));
                 Log.d("SunSalutationExercise.processSensorEvent()", "Tilt up. reps completed: " + reps);
             } else if (isUp() && !isDown() && lastRep == Orientation.DOWN) {
                 vibrator.vibrate(100);
-                reps += 0.5;
+                reps += 1;
                 lastRep = Orientation.UP;
-                repTextTarget.setText(""+(FINAL_REPS-reps));
+                repTextTarget.setText(""+(int)(FINAL_REPS-reps));
                 Log.d("SunSalutationExercise.processSensorEvent()", "Tilt down. reps completed: " + reps);
             }
 

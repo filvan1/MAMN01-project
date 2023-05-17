@@ -41,6 +41,7 @@ public class ExerciseFragment extends Fragment {
     private FragmentEventListener listener;
     private SensorManager sensorManager;
     private Vibrator vibrator;
+    private boolean isRotated;
 
     private Exercise exercise;
     /*Dessa variabler är temporära här för att testa solhälsning. Denna data ska komma från en
@@ -119,6 +120,7 @@ public class ExerciseFragment extends Fragment {
             TextView exerciseNameText = view.findViewById(R.id.exercise_name);
             TextView repsLeftText = view.findViewById(R.id.reps_left);
             ImageView imageView = view.findViewById(R.id.image_view);
+            TextView textRep = view.findViewById(R.id.text_rep);
 
             exerciseNameText.setText(exerciseName.toUpperCase());
 
@@ -127,14 +129,45 @@ public class ExerciseFragment extends Fragment {
                 case "Solhälsning":
                     imageView.setImageResource(R.drawable.sun_salutation);
                     Glide.with(this).asGif().load(R.drawable.sun_salutation).into(imageView);
+
+                    if(!isRotated) {
+                        repsLeftText.setRotation(90);
+                        imageView.setRotation(90);
+                        isRotated = true;
+                    }
+
+                    textRep.setText("REPS LEFT");
+                    repsLeftText.setVisibility(View.VISIBLE);
+
                     exercise = new SunSalutationExercise(exerciseName, sensorManager, repsLeftText, listener, vibrator);
                     break;
                 case "Beachwalk":
                     imageView.setImageResource(R.drawable.beach_walk);
                     Glide.with(this).asGif().load(R.drawable.beach_walk).into(imageView);
+
+                    if(isRotated) {
+                        repsLeftText.setRotation(-90);
+                        imageView.setRotation(-90);
+                        isRotated = false;
+                    }
+
+                    textRep.setText("REPS LEFT");
+                    repsLeftText.setVisibility(View.VISIBLE);
+
                     exercise = new WalkStepsExercise(exerciseName, sensorManager, repsLeftText, listener, vibrator);
                     break;
                 case "Sunlight":
+
+                    if(isRotated) {
+                        repsLeftText.setRotation(-90);
+                        imageView.setRotation(-90);
+                        isRotated = false;
+                    }
+
+                    textRep.setText("LET THERE BE LIGHT");
+                    repsLeftText.setVisibility(View.INVISIBLE);
+
+
                     exercise = new LightExercise(exerciseName, sensorManager, listener, vibrator);
                     break;
 
