@@ -168,7 +168,7 @@ public class ExerciseFragment extends Fragment {
                     repsLeftText.setVisibility(View.INVISIBLE);
 
 
-                    exercise = new LightExercise(exerciseName, sensorManager, listener, vibrator);
+                    exercise = new LightExercise(exerciseName, sensorManager,repsLeftText, listener, vibrator);
                     break;
 
             }

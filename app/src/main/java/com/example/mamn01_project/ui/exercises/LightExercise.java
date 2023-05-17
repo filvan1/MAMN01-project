@@ -6,6 +6,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Vibrator;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.example.mamn01_project.FragmentEventListener;
 
@@ -16,10 +17,13 @@ public class LightExercise extends Exercise {
     private Sensor lightSensor;
     private Vibrator vibrator;
 
-    public LightExercise(String name, SensorManager manager, FragmentEventListener listener, Vibrator vibrator) {
+    private TextView lumenTarget;
+
+    public LightExercise(String name, SensorManager manager, TextView lumen, FragmentEventListener listener, Vibrator vibrator) {
         super(name, manager, listener);
         //this.completed = false;
         this.vibrator = vibrator;
+        this.lumenTarget = lumen;
         lightSensor = manager.getDefaultSensor(Sensor.TYPE_LIGHT);
         manager.registerListener((SensorEventListener) this, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
 
@@ -49,9 +53,11 @@ public class LightExercise extends Exercise {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                Log.d("iscompleted?", "It is:" + isCompleted());
-                listener.onEvent();
-
+                if(isCompleted()) {
+                    sensorManager.unregisterListener(this);
+                    Log.d("iscompleted?", "It is:" + isCompleted());
+                    listener.onEvent();
+                }
             }
         }
     }
