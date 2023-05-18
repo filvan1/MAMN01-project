@@ -72,9 +72,9 @@ public class AlarmFragment extends Fragment {
                 Calendar cal = Calendar.getInstance();
                 // TODO: Make sure time picked is set to next date if required.
                 int targetDate = cal.get(Calendar.DATE);
-                /*if(hours < cal.get(hours)){
+                if(hours < cal.get(Calendar.HOUR)){
                     targetDate++;
-                }*/ //kraschar när klockan är 23:något
+                } //kraschar när klockan är 23:något
                 cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), targetDate, hours, minutes, 0);
 
                 long target = cal.getTimeInMillis();
