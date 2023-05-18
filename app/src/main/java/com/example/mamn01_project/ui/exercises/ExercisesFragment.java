@@ -27,10 +27,10 @@ public class ExercisesFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        TransitionInflater transitionInflater = TransitionInflater.from(requireContext());
+        /*TransitionInflater transitionInflater = TransitionInflater.from(requireContext());
         setEnterTransition(transitionInflater.inflateTransition(R.transition.slide_right));
         setExitTransition(transitionInflater.inflateTransition(R.transition.slide_left));
-
+*/
         ExercisesViewModel exercisesViewModel = new ViewModelProvider(requireActivity()).get(ExercisesViewModel.class);
 
         binding = FragmentExercisesBinding.inflate(inflater, container, false);

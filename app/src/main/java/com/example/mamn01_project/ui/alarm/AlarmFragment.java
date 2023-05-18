@@ -35,20 +35,24 @@ public class AlarmFragment extends Fragment {
     private FragmentAlarmBinding binding;
 
     private AlarmManager alarmManager;
+    private AlarmViewModel alarmViewModel;
 
     private Intent intent;
+    private Button setAlarmButton;
+    private Button cancelAlarmButton;
+    private TextView alarmText;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        TransitionInflater transitionInflater = TransitionInflater.from(requireContext());
+        /*TransitionInflater transitionInflater = TransitionInflater.from(requireContext());
         setEnterTransition(transitionInflater.inflateTransition(R.transition.slide_right));
         setExitTransition(transitionInflater.inflateTransition(R.transition.slide_left));
+*/
+    super.onCreateView(inflater,container,savedInstanceState);
 
 
-
-    AlarmViewModel alarmViewModel =
-                new ViewModelProvider(this).get(AlarmViewModel.class);
-
+    alarmViewModel = new ViewModelProvider(getActivity()).get(AlarmViewModel.class);
+        Log.d("AlarmGet", "Found/Created new alarmviewmodel with value " + alarmViewModel.getAlarm().getValue());
 
         binding = FragmentAlarmBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -57,16 +61,18 @@ public class AlarmFragment extends Fragment {
 
         // Need to call findViewById on the specific view that this fragment returns
 
-        Button button = (Button) root.findViewById(R.id.alarm_button);
+        setAlarmButton = (Button) root.findViewById(R.id.alarm_button);
+        cancelAlarmButton = (Button) root.findViewById(R.id.skip_button);
+        alarmText = root.findViewById(R.id.text_home);
 
-        // Alarm button
-        button.setOnClickListener(new View.OnClickListener() {
+        alarmText.setText(alarmViewModel.getAlarm().getValue());
+
+        View.OnClickListener onClickListener = new View.OnClickListener() {
 
             // Use Calendar to convert specific dates:hours:minutes to miliseconds.
             Calendar cal = Calendar.getInstance();
             int currentHour = cal.get(Calendar.HOUR_OF_DAY);
             int currentMinute = cal.get(Calendar.MINUTE);
-            TextView alarmText = root.findViewById(R.id.text_home);
 
             TimePickerDialog pickerDialog = new TimePickerDialog(getActivity(), (timePicker, hours, minutes) ->{
                 Calendar cal = Calendar.getInstance();
@@ -90,22 +96,24 @@ public class AlarmFragment extends Fragment {
 
                 if (minutes >= 0 && minutes <= 9) {
                     if(hours >= 0 && hours <= 9){
-                        alarmText.setText("0"+hours + ":0" + minutes);
+                        alarmViewModel.setAlarmString("0"+hours + ":0" + minutes);
                         Toast.makeText(getActivity(), "Alarm set for 0" + hours + ":0" + minutes + ".", Toast.LENGTH_LONG).show();
                     } else{
-                        alarmText.setText(hours + ":0" + minutes);
+                        alarmViewModel.setAlarmString(hours + ":0" + minutes);
                         Toast.makeText(getActivity(), "Alarm set for " + hours + ":0" + minutes + ".", Toast.LENGTH_LONG).show();
                     }
-                        } else {
+                } else {
                     if(hours >= 0 && hours <= 9){
-                        alarmText.setText("0"+hours + ":" + minutes);
+                        alarmViewModel.setAlarmString("0"+hours + ":" + minutes);
                         Toast.makeText(getActivity(), "Alarm set for 0" + hours + ":" + minutes + ".", Toast.LENGTH_LONG).show();
                     } else{
-                        alarmText.setText(hours + ":" + minutes);
+                        alarmViewModel.setAlarmString(hours + ":" + minutes);
                         Toast.makeText(getActivity(), "Alarm set for " + hours + ":" + minutes + ".", Toast.LENGTH_LONG).show();
 
                     }
                 }
+
+
             }, currentHour, currentMinute, true);
 
 
@@ -113,6 +121,16 @@ public class AlarmFragment extends Fragment {
             public void onClick(View v) {
                 Log.d("BUTTONS", "User tapped the button");
                 pickerDialog.show();
+            }
+        };
+        // Alarm button
+        setAlarmButton.setOnClickListener(onClickListener);
+        textView.setOnClickListener(onClickListener);
+        cancelAlarmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                stopAlarm();
+                alarmText.setText(alarmViewModel.ALARM_NOT_SET);
             }
         });
 
@@ -122,7 +140,10 @@ public class AlarmFragment extends Fragment {
     private void stopAlarm() {
         if (alarmManager != null && pending != null) {
             alarmManager.cancel(pending);
-            Toast.makeText(getActivity(), "Alarm stopped.", Toast.LENGTH_SHORT).show();
+            alarmViewModel.setAlarmString(alarmViewModel.ALARM_NOT_SET);
+            Toast.makeText(getActivity(), "Alarm cancelled.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getActivity(), "No alarm to cancel.", Toast.LENGTH_SHORT).show();
         }
     }
 

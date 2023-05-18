@@ -16,8 +16,10 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.example.mamn01_project.ui.alarm.AlarmFragment;
+import com.example.mamn01_project.ui.alarm.AlarmViewModel;
 import com.example.mamn01_project.ui.exercises.Exercise;
 import com.example.mamn01_project.ui.exercises.ExerciseListEntry;
 import com.example.mamn01_project.ui.exercises.ExercisesViewModel;
@@ -55,6 +57,7 @@ public class Wake extends AppCompatActivity {
     private ActivityWakeBinding binding;
     private BroadcastReceiver alarmStopReceiver;
     private ExercisesViewModel exercisesViewModel;
+    public AlarmViewModel alarmViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +146,15 @@ public class Wake extends AppCompatActivity {
             }
         });
 
+        alarmViewModel = new ViewModelProvider(this).get(AlarmViewModel.class);
+
+
+        alarmViewModel.getAlarm().observe(this, alarm -> {
+            Log.d("AlarmGet", "Observed changed text: "+ alarm);
+            TextView alarmText = findViewById(R.id.text_home);
+            alarmText.setText(alarm);
+        });
+
         //LocalBroadcastManager.getInstance(this).registerReceiver(alarmStopReceiver, new IntentFilter("ALARM_STOP"));
     }
 
@@ -180,6 +192,7 @@ public class Wake extends AppCompatActivity {
                 Log.d("AlarmActivity", "ADDED: " +enabledExerciseNames );
             }
 
+
             // Make sure that the alarm activity starts properly
             nextActivity.setFlags(
                     Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
@@ -191,6 +204,8 @@ public class Wake extends AppCompatActivity {
             pending = PendingIntent.getActivity(context, 0, nextActivity, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
             try {
+                TextView alarmText = findViewById(R.id.text_home);
+                alarmText.setText(alarmViewModel.ALARM_NOT_SET);
                 pending.send();
             } catch (PendingIntent.CanceledException e) {
                 e.printStackTrace();

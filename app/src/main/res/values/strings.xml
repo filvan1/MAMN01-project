@@ -22,7 +22,7 @@
     <!-- Strings till fragment_alarm -->
     <string name="change_alarm">Change alarm</string>
     <string name="skip_alarm">Skip alarm</string>
-    <string name="alarmtime">0:00</string>
+    <string name="alarmtime">- -:- -</string>
     <string name="alarm">Your next alarm is set to</string>
     <string name="intent_alarm_trigger">ALARM_TRIGGER</string>
     <!-- TODO: Remove or change this placeholder text -->
