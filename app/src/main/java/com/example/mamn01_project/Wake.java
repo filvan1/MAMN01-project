@@ -205,6 +205,7 @@ public class Wake extends AppCompatActivity {
 
             try {
                 TextView alarmText = findViewById(R.id.text_home);
+                alarmViewModel.setAlarmString(alarmViewModel.ALARM_NOT_SET);
                 alarmText.setText(alarmViewModel.ALARM_NOT_SET);
                 pending.send();
             } catch (PendingIntent.CanceledException e) {
