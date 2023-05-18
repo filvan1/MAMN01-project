@@ -116,6 +116,8 @@ public class ExerciseFragment extends Fragment {
             Button button = view.findViewById(R.id.start_button);
             if(numExercises == 0){
                 button.setText("Turn off alarm");
+            } else {
+                button.setBackgroundColor(getResources().getColor(R.color.nw_primary, getActivity().getTheme()));
             }
             button.setOnClickListener(v -> {
                 if(listener != null){
