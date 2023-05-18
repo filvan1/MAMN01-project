@@ -52,7 +52,6 @@ public class AlarmFragment extends Fragment {
 
 
     alarmViewModel = new ViewModelProvider(getActivity()).get(AlarmViewModel.class);
-        Log.d("AlarmGet", "Found/Created new alarmviewmodel with value " + alarmViewModel.getAlarm().getValue());
 
         binding = FragmentAlarmBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -141,6 +140,7 @@ public class AlarmFragment extends Fragment {
         if (alarmManager != null && pending != null) {
             alarmManager.cancel(pending);
             alarmViewModel.setAlarmString(alarmViewModel.ALARM_NOT_SET);
+            pending = null;
             Toast.makeText(getActivity(), "Alarm cancelled.", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getActivity(), "No alarm to cancel.", Toast.LENGTH_SHORT).show();
