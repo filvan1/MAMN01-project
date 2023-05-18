@@ -14,7 +14,7 @@ public class ExercisesViewModel extends ViewModel {
     public ExercisesViewModel() {
         exercises = new MutableLiveData<>();
         List<ExerciseListEntry> startingExercises = new ArrayList<>();
-        startingExercises.add(new ExerciseListEntry("Solhälsning"));
+        startingExercises.add(new ExerciseListEntry("Sun salutation"));
         startingExercises.add(new ExerciseListEntry("Beachwalk"));
         startingExercises.add(new ExerciseListEntry("Sunlight"));
 

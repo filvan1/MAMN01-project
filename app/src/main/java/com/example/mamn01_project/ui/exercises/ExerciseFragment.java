@@ -32,7 +32,7 @@ public class ExerciseFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private static final String SUN_SALUTATION = "Solhälsning";
+    private static final String SUN_SALUTATION = "Sun salutation";
     private static final String BEACH_WALK = "Beachwalk";
 
     // TODO: Rename and change types of parameters
@@ -126,7 +126,7 @@ public class ExerciseFragment extends Fragment {
 
             switch(exerciseName) {
 
-                case "Solhälsning":
+                case "Sun salutation":
                     imageView.setImageResource(R.drawable.sun_salutation);
                     Glide.with(this).asGif().load(R.drawable.sun_salutation).into(imageView);
 
