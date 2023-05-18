@@ -1,14 +1,18 @@
 package com.example.mamn01_project.ui.exercises;
 
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.MediaPlayer;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.util.Log;
 import android.widget.TextView;
 
 import com.example.mamn01_project.FragmentEventListener;
+import com.example.mamn01_project.R;
 
 public class LightExercise extends Exercise {
     private static final float LIGHT_THRESHOLD = 1250; // threshold in lux
@@ -17,13 +21,15 @@ public class LightExercise extends Exercise {
     private Sensor lightSensor;
     private Vibrator vibrator;
 
-    private TextView lumenTarget;
+    private TextView indicator;
+    private MediaPlayer mediaPlayer;
 
-    public LightExercise(String name, SensorManager manager, TextView lumen, FragmentEventListener listener, Vibrator vibrator) {
+    public LightExercise(String name, SensorManager manager, TextView indicator, FragmentEventListener listener, Vibrator vibrator) {
         super(name, manager, listener);
-        //this.completed = false;
+        this.completed = false;
         this.vibrator = vibrator;
-        this.lumenTarget = lumen;
+        this.indicator = indicator;
+        mediaPlayer = MediaPlayer.create(indicator.getContext(), R.raw.task_success);
         lightSensor = manager.getDefaultSensor(Sensor.TYPE_LIGHT);
         manager.registerListener((SensorEventListener) this, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
 
@@ -47,17 +53,18 @@ public class LightExercise extends Exercise {
             Log.d("Light value", "processSensorEvent: " + sensorEvent.values[0]);
             if (sensorEvent.values[0] > LIGHT_THRESHOLD) {
                 completed = true;
-                vibrator.vibrate(100);
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                if(isCompleted()) {
-                    sensorManager.unregisterListener(this);
-                    Log.d("iscompleted?", "It is:" + isCompleted());
-                    listener.onEvent();
-                }
+
+                sensorManager.unregisterListener(this);
+
+                indicator.setTextColor(Color.GREEN);
+                mediaPlayer.start();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onEvent();
+                    }
+                }, 2000);
+
             }
         }
     }

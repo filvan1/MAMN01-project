@@ -2,10 +2,13 @@ package com.example.mamn01_project.ui.exercises;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.MediaPlayer;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.util.Log;
 import android.widget.TextView;
@@ -13,6 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.example.mamn01_project.FragmentEventListener;
+import com.example.mamn01_project.R;
 
 
 public class SunSalutationExercise extends Exercise {
@@ -32,6 +36,8 @@ public class SunSalutationExercise extends Exercise {
     private Vibrator vibrator;
     private TextView repTextTarget;
 
+    private MediaPlayer mediaPlayer;
+
     private enum Orientation {
         UP,
         DOWN
@@ -41,13 +47,16 @@ public class SunSalutationExercise extends Exercise {
 
     public SunSalutationExercise(String name, SensorManager manager, TextView repText, FragmentEventListener listener, Vibrator vibrator) {
         super(name, manager, listener);
-        lastRep = Orientation.UP;
+        lastRep = Orientation.UP; //FÖRSTA REPET MÅSTE VARA NERÅT
         this.vibrator = vibrator;
         repTextTarget = repText;
         repTextTarget.setText(""+(int)FINAL_REPS);
         accelerometer = manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         //accelerometer = manager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         magnetometer = manager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+
+        mediaPlayer = MediaPlayer.create(repText.getContext(), R.raw.task_success);
+
         manager.registerListener((SensorEventListener) this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         manager.registerListener((SensorEventListener) this, magnetometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
@@ -65,7 +74,6 @@ public class SunSalutationExercise extends Exercise {
 
     @Override
     public void processSensorEvent(SensorEvent sensorEvent) {
-
         //V1: orienteringsbaserad, inte bara acceleration uppåt--------------------------------
         /*
         float[] rotationMatrix = new float[9];
@@ -99,7 +107,17 @@ public class SunSalutationExercise extends Exercise {
         if (reps == FINAL_REPS) {
             setCompleted(true);
             sensorManager.unregisterListener(this);
-            listener.onEvent();
+            repTextTarget.setTextColor(Color.GREEN);
+            mediaPlayer.start();
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    listener.onEvent();
+                }
+            }, 2000);
+
+
             Log.d("SunSalutationExercise.processSensorEvent()", "EXERCISE COMPLETED");
         } else if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             acceleration = sensorEvent.values;
@@ -172,21 +190,6 @@ public class SunSalutationExercise extends Exercise {
                 //Checks if device is flat on ground or not
                 int inclination = (int) Math.round(Math.toDegrees(Math.acos(inclineGravity[2])));
 
-                /*
-                 * Float obj1 = new Float("10.2");
-                 * Float obj2 = new Float("10.20");
-                 * int retval = obj1.compareTo(obj2);
-                 *
-                 * if(retval > 0) {
-                 * System.out.println("obj1 is greater than obj2");
-                 * }
-                 * else if(retval < 0) {
-                 * System.out.println("obj1 is less than obj2");
-                 * }
-                 * else {
-                 * System.out.println("obj1 is equal to obj2");
-                 * }
-                 */
                 Float objPitch = new Float(pitch);
                 Float objZero = new Float(0.0);
                 Float objZeroPointTwo = new Float(0.2);

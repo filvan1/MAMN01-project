@@ -1,6 +1,7 @@
 package com.example.mamn01_project.ui.exercises;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 
@@ -138,6 +139,7 @@ public class ExerciseFragment extends Fragment {
 
                     textRep.setText("REPS LEFT");
                     repsLeftText.setVisibility(View.VISIBLE);
+                    repsLeftText.setTextColor(Color.WHITE);
 
                     exercise = new SunSalutationExercise(exerciseName, sensorManager, repsLeftText, listener, vibrator);
                     break;
@@ -151,8 +153,10 @@ public class ExerciseFragment extends Fragment {
                         isRotated = false;
                     }
 
+                    textRep.setTextColor(Color.WHITE);
                     textRep.setText("REPS LEFT");
                     repsLeftText.setVisibility(View.VISIBLE);
+                    repsLeftText.setTextColor(Color.WHITE);
 
                     exercise = new WalkStepsExercise(exerciseName, sensorManager, repsLeftText, listener, vibrator);
                     break;
@@ -166,13 +170,14 @@ public class ExerciseFragment extends Fragment {
                         isRotated = false;
                     }
 
+                    textRep.setTextColor(Color.WHITE);
                     textRep.setText("LET THERE BE LIGHT");
+
                     repsLeftText.setVisibility(View.INVISIBLE);
 
 
-                    exercise = new LightExercise(exerciseName, sensorManager,repsLeftText, listener, vibrator);
+                    exercise = new LightExercise(exerciseName, sensorManager,textRep, listener, vibrator);
                     break;
-
             }
 
 

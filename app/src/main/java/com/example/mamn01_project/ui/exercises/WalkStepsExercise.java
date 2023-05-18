@@ -1,14 +1,18 @@
 package com.example.mamn01_project.ui.exercises;
 
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.MediaPlayer;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.util.Log;
 import android.widget.TextView;
 
 import com.example.mamn01_project.FragmentEventListener;
+import com.example.mamn01_project.R;
 
 
 public class WalkStepsExercise extends Exercise {
@@ -27,6 +31,8 @@ public class WalkStepsExercise extends Exercise {
     private TextView repTextTarget;
     private Vibrator vibrator;
 
+    private MediaPlayer mediaPlayer;
+
 
 
     public WalkStepsExercise(String name, SensorManager manager, TextView repText, FragmentEventListener listener, Vibrator vibrator) {
@@ -37,6 +43,9 @@ public class WalkStepsExercise extends Exercise {
         this.vibrator = vibrator;
         this.repTextTarget = repText;
         repTextTarget.setText(""+(int)TARGET_STEPS);
+
+        mediaPlayer = MediaPlayer.create(repText.getContext(), R.raw.task_success);
+
         stepSensor = manager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
         manager.registerListener((SensorEventListener) this, stepSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
@@ -76,9 +85,17 @@ public class WalkStepsExercise extends Exercise {
             repTextTarget.setText(""+(int)(TARGET_STEPS-currentSteps));
             vibrator.vibrate(100);
             Log.d("BeachWalk", "processSensorEvent: steps " + currentSteps + "  A "+ sensorEvent.values);
+
             if(isCompleted()){
                 sensorManager.unregisterListener(this);
-                listener.onEvent();
+                repTextTarget.setTextColor(Color.GREEN);
+                mediaPlayer.start();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onEvent();
+                    }
+                }, 2000);
             }
 
             Log.d("BeachWalk", "Completed?: " + isCompleted());
