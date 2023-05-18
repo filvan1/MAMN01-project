@@ -33,6 +33,7 @@ public class ExerciseFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM3 = "param3";
     private static final String SUN_SALUTATION = "Sun salutation";
     private static final String BEACH_WALK = "Beachwalk";
 
@@ -43,8 +44,19 @@ public class ExerciseFragment extends Fragment {
     private SensorManager sensorManager;
     private Vibrator vibrator;
     private boolean isRotated;
+    private int numExercises = 0;
 
     private Exercise exercise;
+
+    public static ExerciseFragment newInstance(String exerciseName, int fragment_alert, int numExercises) {
+        ExerciseFragment fragment = new ExerciseFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, exerciseName);
+        args.putInt(ARG_PARAM2, fragment_alert);
+        args.putInt(ARG_PARAM3, numExercises);
+        fragment.setArguments(args);
+        return fragment;
+    }
     /*Dessa variabler är temporära här för att testa solhälsning. Denna data ska komma från en
     separat class för varje övning sen
     private boolean overHead = false;
@@ -91,6 +103,7 @@ public class ExerciseFragment extends Fragment {
         if (getArguments() != null) {
             exerciseName = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getInt(ARG_PARAM2);
+            numExercises = getArguments().getInt(ARG_PARAM3);
         }
 
     }
@@ -101,6 +114,9 @@ public class ExerciseFragment extends Fragment {
         View view = inflater.inflate(mParam2, container, false);
         if(exerciseName == null){
             Button button = view.findViewById(R.id.start_button);
+            if(numExercises == 0){
+                button.setText("Turn off alarm");
+            }
             button.setOnClickListener(v -> {
                 if(listener != null){
                     listener.onEvent();

@@ -51,6 +51,7 @@ public class AlarmActivity extends AppCompatActivity {
     private FragmentTransaction currentTransaction;
 
     private List<String> enabledExercises;
+    private int numExercises = 0;
     private String currentExercise;
     private ExerciseFragment frag;
     private long[] pattern = {0, 100, 500, 100, 500, 100, 500, 100, 500, 100, 500};
@@ -82,6 +83,7 @@ public class AlarmActivity extends AppCompatActivity {
             Log.d("AlarmActivity", "RECEIVED: " +enabledExerciseNames );
             if (enabledExerciseNames != null && !enabledExerciseNames.isEmpty()) {
                 enabledExercises = new ArrayList<>();
+                numExercises = enabledExerciseNames.size();
                 for (String exerciseName : enabledExerciseNames) {
 
                     Log.d("AlarmActivity", "NEW EXERCISE"+ exerciseName);
@@ -93,7 +95,8 @@ public class AlarmActivity extends AppCompatActivity {
 
         /* I don't know why this if statement is needed*/
         if (savedInstanceState == null){
-            frag = ExerciseFragment.newInstance(null, R.layout.fragment_alert);
+            frag = ExerciseFragment.newInstance(null, R.layout.fragment_alert, numExercises);
+
             frag.setOnEventListener(listener);
             currentTransaction
                     .setReorderingAllowed(true)
@@ -191,7 +194,6 @@ public class AlarmActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
             v.vibrate(VibrationEffect.createWaveform(pattern, 0));
         } else {
             //deprecated in API 26
