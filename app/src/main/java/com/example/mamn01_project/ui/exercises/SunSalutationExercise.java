@@ -109,7 +109,7 @@ public class SunSalutationExercise extends Exercise {
         if (reps == FINAL_REPS) {
             setCompleted(true);
             sensorManager.unregisterListener(this);
-            repTextTarget.setTextColor(Color.GREEN);
+            repTextTarget.setTextColor(Color.parseColor("#228B22"));
 
             mediaPlayer.start();
             vibrator.vibrate(250);

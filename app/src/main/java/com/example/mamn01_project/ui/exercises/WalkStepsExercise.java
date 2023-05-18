@@ -95,7 +95,7 @@ public class WalkStepsExercise extends Exercise {
 
             if(isCompleted()){
                 sensorManager.unregisterListener(this);
-                repTextTarget.setTextColor(Color.GREEN);
+                repTextTarget.setTextColor(Color.parseColor("#228B22"));
                 mediaPlayer.start();
 
                 vibrator.vibrate(250);
