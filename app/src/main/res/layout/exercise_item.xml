@@ -40,7 +40,7 @@
         style="@style/CustomToggleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/toggle_button_background"
+        android:background="@color/nw_skipbutton"
         android:textOn="ON"
         android:textOff="OFF"
         android:textColor="#FFFFFF"
