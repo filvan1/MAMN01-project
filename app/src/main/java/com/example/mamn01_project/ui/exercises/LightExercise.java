@@ -58,6 +58,9 @@ public class LightExercise extends Exercise {
 
                 indicator.setTextColor(Color.GREEN);
                 mediaPlayer.start();
+
+                vibrator.vibrate(250);
+
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {

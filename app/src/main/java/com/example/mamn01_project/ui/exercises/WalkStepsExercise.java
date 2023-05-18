@@ -6,7 +6,9 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Handler;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
 import android.widget.TextView;
@@ -83,13 +85,21 @@ public class WalkStepsExercise extends Exercise {
             }
             currentSteps++;
             repTextTarget.setText(""+(int)(TARGET_STEPS-currentSteps));
-            vibrator.vibrate(100);
+            //vibrator.vibrate(100);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(VibrationEffect.createOneShot(100, 30));
+            }
+
+
             Log.d("BeachWalk", "processSensorEvent: steps " + currentSteps + "  A "+ sensorEvent.values);
 
             if(isCompleted()){
                 sensorManager.unregisterListener(this);
                 repTextTarget.setTextColor(Color.GREEN);
                 mediaPlayer.start();
+
+                vibrator.vibrate(250);
+
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {

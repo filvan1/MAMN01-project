@@ -8,7 +8,9 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Handler;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
 import android.widget.TextView;
@@ -108,7 +110,9 @@ public class SunSalutationExercise extends Exercise {
             setCompleted(true);
             sensorManager.unregisterListener(this);
             repTextTarget.setTextColor(Color.GREEN);
+
             mediaPlayer.start();
+            vibrator.vibrate(250);
 
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -130,13 +134,17 @@ public class SunSalutationExercise extends Exercise {
             //Log.d("Sensor type magnetic", "magnetometer values: " +  magnetic);
             //Log.d("Sensor type magnetic", "accelerometer values: " +  acceleration);
             if (isDown() && !isUp() && lastRep == Orientation.UP) {
-                vibrator.vibrate(100);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vibrator.vibrate(VibrationEffect.createOneShot(100, 30));
+                }
                 reps += 1;
                 lastRep = Orientation.DOWN;
                 repTextTarget.setText(""+(int)(FINAL_REPS-reps));
                 Log.d("SunSalutationExercise.processSensorEvent()", "Tilt up. reps completed: " + reps);
             } else if (isUp() && !isDown() && lastRep == Orientation.DOWN) {
-                vibrator.vibrate(100);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vibrator.vibrate(VibrationEffect.createOneShot(100, 30));
+                }
                 reps += 1;
                 lastRep = Orientation.UP;
                 repTextTarget.setText(""+(int)(FINAL_REPS-reps));
