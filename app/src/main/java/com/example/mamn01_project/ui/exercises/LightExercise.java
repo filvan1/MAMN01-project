@@ -56,7 +56,8 @@ public class LightExercise extends Exercise {
 
                 sensorManager.unregisterListener(this);
 
-                indicator.setTextColor(Color.parseColor("#228B22"));
+                //indicator.setTextColor(Color.parseColor("#228B22"));
+                indicator.setTextColor(Color.GREEN); //Fulare men synligare
                 mediaPlayer.start();
 
                 vibrator.vibrate(250);
