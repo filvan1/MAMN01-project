@@ -80,6 +80,9 @@ public class AlarmFragment extends Fragment {
                 if(hours < cal.get(Calendar.HOUR_OF_DAY)){
                     Log.d("AlarmFrag", "Current hour:" +cal.get(Calendar.HOUR_OF_DAY)+ " Target Hour: "+hours);
                     targetDate++;
+                }else if(hours == cal.get(Calendar.HOUR_OF_DAY) && minutes < cal.get(Calendar.MINUTE)){
+                    Log.d("AlarmFrag", "SAME Current min:" +cal.get(Calendar.MINUTE)+ " Target min: "+minutes);
+                    targetDate++;
                 }
                 cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), targetDate, hours, minutes, 0);
 
