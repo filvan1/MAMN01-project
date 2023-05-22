@@ -33,7 +33,7 @@ public class SunSalutationExercise extends Exercise {
 
 
     private double reps;
-    private final int FINAL_REPS = 12;
+    private final int FINAL_REPS = 10;
     private boolean completed = false;
     private Vibrator vibrator;
     private TextView repTextTarget;
@@ -49,7 +49,7 @@ public class SunSalutationExercise extends Exercise {
 
     public SunSalutationExercise(String name, SensorManager manager, TextView repText, FragmentEventListener listener, Vibrator vibrator) {
         super(name, manager, listener);
-        lastRep = Orientation.UP; //FÖRSTA REPET MÅSTE VARA NERÅT
+        lastRep = Orientation.DOWN; //FÖRSTA REPET MÅSTE VARA UPPÅT
         this.vibrator = vibrator;
         repTextTarget = repText;
         repTextTarget.setText(""+(int)FINAL_REPS);

@@ -141,6 +141,9 @@ public class ExerciseFragment extends Fragment {
             ImageView imageView = view.findViewById(R.id.image_view);
             TextView textRep = view.findViewById(R.id.text_rep);
 
+            TextView exerciseNameTextRot = view.findViewById(R.id.exercise_name_rotated);
+            TextView textRepRot = view.findViewById(R.id.text_rep_rotated);
+
             exerciseNameText.setText(exerciseName.toUpperCase());
 
             switch(exerciseName) {
@@ -153,9 +156,16 @@ public class ExerciseFragment extends Fragment {
                         repsLeftText.setRotation(90);
                         imageView.setRotation(90);
                         isRotated = true;
+
+
                     }
 
-                    textRep.setText("REPS LEFT");
+                    exerciseNameTextRot.setVisibility(View.VISIBLE);
+                    textRepRot.setVisibility(View.VISIBLE);
+                    exerciseNameText.setVisibility(View.INVISIBLE);
+                    textRep.setVisibility(View.INVISIBLE);
+
+                    //textRep.setText("REPS LEFT");
                     repsLeftText.setVisibility(View.VISIBLE);
                     repsLeftText.setTextColor(Color.WHITE);
 
@@ -170,6 +180,12 @@ public class ExerciseFragment extends Fragment {
                         imageView.setRotation(-90);
                         isRotated = false;
                     }
+
+                    exerciseNameTextRot.setVisibility(View.INVISIBLE);
+                    textRepRot.setVisibility(View.INVISIBLE);
+                    exerciseNameText.setVisibility(View.VISIBLE);
+                    textRep.setVisibility(View.VISIBLE);
+
 
                     textRep.setTextColor(Color.WHITE);
                     textRep.setText("REPS LEFT");
@@ -187,6 +203,11 @@ public class ExerciseFragment extends Fragment {
                         imageView.setRotation(-90);
                         isRotated = false;
                     }
+
+                    exerciseNameTextRot.setVisibility(View.INVISIBLE);
+                    textRepRot.setVisibility(View.INVISIBLE);
+                    exerciseNameText.setVisibility(View.VISIBLE);
+                    textRep.setVisibility(View.VISIBLE);
 
                     textRep.setTextColor(Color.WHITE);
                     textRep.setText("LET THERE BE LIGHT");
